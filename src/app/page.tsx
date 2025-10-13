@@ -106,13 +106,13 @@ export default function Home() {
         )}
         {activeTab === 'presets' && (
           <PresetGallery
-            presets={stylePresets as StylePreset[]}
+            presets={stylePresets.presets as StylePreset[]}
             onApplyPreset={handleApplyPreset}
           />
         )}
         {activeTab === 'shots' && (
           <ShotBrowser
-            shots={shotLibrary as Shot[]}
+            shots={shotLibrary.shots as Shot[]}
             onAddShot={handleAddShot}
           />
         )}
