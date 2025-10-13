@@ -69,7 +69,7 @@ export function PresetGallery({ presets, onApplyPreset }: PresetGalleryProps) {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {filteredPresets.map(preset => (
           <Card
-            key={preset.id}
+            key={preset.name}
             className="cursor-pointer hover:border-purple-500/50 transition-all hover:shadow-lg hover:shadow-purple-500/10"
             onClick={() => setSelectedPreset(preset)}
           >
