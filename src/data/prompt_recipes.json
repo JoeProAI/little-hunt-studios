@@ -1,0 +1,368 @@
+{
+  "version": "1.0",
+  "description": "Parameterized prompt templates for Sora 2 video generation across various use cases",
+  "recipes": [
+    {
+      "name": "Product Showcase - Premium",
+      "category": "product",
+      "description": "High-end product reveal with cinematic camera work and dramatic lighting",
+      "template": "[SCENE] {studio_setting} with {lighting_style}\n[SUBJECT] {product_name} featuring {key_features}\n[ACTION] {product_action} then {feature_highlight}\n[CAMERA] {shot_progression} with {lens_type}, shallow depth of field\n[LOOK] {brand_aesthetic} with {color_palette}\n[MOTION] Smooth, controlled at {motion_speed}\n[AUDIO] {ambient_sound} and {product_sounds}\n[NEGATIVES] No fingerprints, no reflections of camera equipment, no motion blur\n[DURATION] {duration_seconds} seconds",
+      "variables": {
+        "studio_setting": "minimalist white studio | industrial loft | natural outdoor setting | dark dramatic stage",
+        "lighting_style": "soft diffused | dramatic side lighting | golden hour natural | high-key bright",
+        "product_name": "specific product identifier",
+        "key_features": "metallic finish, curved edges, LED indicators",
+        "product_action": "slowly rotates 360 degrees | rises from surface | unfolds to reveal interior",
+        "feature_highlight": "screen lights up | LED pulses | component separates",
+        "shot_progression": "static medium shot | slow dolly-in | orbital rotation | crane descent",
+        "lens_type": "anamorphic lens | telephoto lens | wide-angle lens",
+        "brand_aesthetic": "clean commercial | luxury premium | tech minimalist | organic natural",
+        "color_palette": "monochrome with accent | warm earth tones | cool blues and silvers | vibrant saturated",
+        "motion_speed": "2 seconds per 90 degrees | real-time | 50% slow motion",
+        "ambient_sound": "subtle electronic hum | silence | soft ambient music",
+        "product_sounds": "mechanical clicks | soft whoosh | metallic resonance",
+        "duration_seconds": "10 | 12 | 15"
+      },
+      "negatives": [
+        "fingerprints",
+        "camera reflections",
+        "motion blur",
+        "dust particles"
+      ],
+      "duration_hint": "10-15 seconds",
+      "notes": "Best for luxury goods, electronics, automotive details. Use shallow depth of field to isolate product."
+    },
+    {
+      "name": "Fashion Editorial",
+      "category": "fashion",
+      "description": "High-fashion editorial style with model movement and dramatic composition",
+      "template": "[SCENE] {location} with {atmosphere}\n[SUBJECT] Model wearing {outfit_description}, {pose_description}\n[ACTION] {model_action} with {movement_quality}\n[CAMERA] {camera_movement} with {framing}, {lens_choice}\n[LOOK] {fashion_aesthetic} with {color_grading}\n[MOTION] {motion_style}\n[AUDIO] {music_style} with {ambient_elements}\n[NEGATIVES] No awkward poses, no unflattering angles, no harsh shadows on face\n[DURATION] {duration_seconds} seconds",
+      "variables": {
+        "location": "urban rooftop at sunset | minimalist white studio | industrial warehouse | natural landscape",
+        "atmosphere": "golden hour glow | moody overcast | dramatic storm clouds | soft morning light",
+        "outfit_description": "flowing silk dress in emerald green | tailored black suit | avant-garde geometric design",
+        "pose_description": "confident stance with hand on hip | dynamic mid-stride | contemplative seated position",
+        "model_action": "walks toward camera | spins with fabric flowing | strikes pose then relaxes",
+        "movement_quality": "graceful fluidity | sharp precision | casual ease",
+        "camera_movement": "slow dolly-in | tracking shot following model | static with rack focus",
+        "framing": "full body shot | medium close-up | dramatic low angle",
+        "lens_choice": "anamorphic with horizontal flares | telephoto with compression | wide-angle for drama",
+        "fashion_aesthetic": "high-fashion editorial | street style casual | avant-garde experimental",
+        "color_grading": "desaturated with teal shadows | warm golden tones | high contrast black and white",
+        "motion_style": "slow motion at 50% | real-time natural | speed ramps for emphasis",
+        "music_style": "minimal electronic | orchestral strings | contemporary pop",
+        "ambient_elements": "wind rustling fabric | city traffic distant | silence for impact",
+        "duration_seconds": "12 | 15 | 18"
+      },
+      "negatives": [
+        "awkward poses",
+        "unflattering angles",
+        "harsh facial shadows",
+        "stiff movement"
+      ],
+      "duration_hint": "12-18 seconds",
+      "notes": "Emphasize fabric movement and model confidence. Use slow motion for dramatic fabric flow."
+    },
+    {
+      "name": "Sports Action Highlight",
+      "category": "sports",
+      "description": "Dynamic sports action with energy and motion emphasis",
+      "template": "[SCENE] {sports_venue} during {time_of_day}\n[SUBJECT] Athlete performing {sport_action}, wearing {athlete_description}\n[ACTION] {action_sequence} with {intensity_level}\n[CAMERA] {camera_technique} with {shot_type}\n[LOOK] {visual_style} with {color_treatment}\n[MOTION] {motion_characteristics}\n[AUDIO] {crowd_sounds} with {action_sounds} and {music_bed}\n[NEGATIVES] No blurry faces, no unrealistic physics, no static moments\n[DURATION] {duration_seconds} seconds",
+      "variables": {
+        "sports_venue": "outdoor stadium packed with fans | indoor basketball court | beach volleyball court | mountain trail",
+        "time_of_day": "golden hour sunset | bright midday | dramatic evening lights | early morning",
+        "sport_action": "basketball dunk | soccer goal kick | tennis serve | skateboard trick",
+        "athlete_description": "team jersey number 23 | compression gear in team colors | casual athletic wear",
+        "action_sequence": "runs, jumps, and scores | pivots and launches | accelerates then executes move",
+        "intensity_level": "explosive power | controlled precision | flowing grace",
+        "camera_technique": "handheld following action | slow-motion close-up | wide establishing then push-in",
+        "shot_type": "low angle emphasizing power | eye-level tracking | overhead dramatic",
+        "visual_style": "gritty documentary | polished commercial | cinematic epic",
+        "color_treatment": "saturated vibrant | slightly desaturated with contrast | natural realistic",
+        "motion_characteristics": "50% slow motion on peak action | speed ramps from normal to slow | real-time intensity",
+        "crowd_sounds": "roaring cheers | gasps of anticipation | rhythmic chanting",
+        "action_sounds": "ball impact | shoes squeaking | equipment sounds",
+        "music_bed": "epic orchestral build | driving electronic beat | minimal tension",
+        "duration_seconds": "8 | 10 | 12"
+      },
+      "negatives": [
+        "blurry faces",
+        "unrealistic physics",
+        "static moments",
+        "poor timing"
+      ],
+      "duration_hint": "8-12 seconds",
+      "notes": "Use slow motion at peak action moments. Handheld camera adds energy and realism."
+    },
+    {
+      "name": "Cinematic Landscape",
+      "category": "landscape",
+      "description": "Epic landscape cinematography with atmospheric depth",
+      "template": "[SCENE] {landscape_type} during {lighting_condition}\n[SUBJECT] {focal_elements} with {atmospheric_effects}\n[ACTION] {natural_movement} creating {visual_progression}\n[CAMERA] {camera_movement} with {shot_scale}, deep focus\n[LOOK] {cinematic_style} with {color_palette}\n[MOTION] {motion_speed}\n[AUDIO] {natural_sounds} with {musical_underscore}\n[NEGATIVES] No modern elements, no harsh lighting, no static composition\n[DURATION] {duration_seconds} seconds",
+      "variables": {
+        "landscape_type": "mountain range with snow-capped peaks | dense foggy forest | coastal cliffs with crashing waves | desert dunes at sunset",
+        "lighting_condition": "golden hour with warm directional light | blue hour twilight | dramatic storm clouds | soft overcast diffusion",
+        "focal_elements": "ancient trees with gnarled branches | weathered rock formations | flowing waterfall",
+        "atmospheric_effects": "volumetric fog rolling through valleys | sun rays piercing clouds | mist rising from water",
+        "natural_movement": "clouds drifting across sky | wind rustling vegetation | water flowing over rocks",
+        "visual_progression": "depth from foreground to distant horizon | light gradually illuminating scene",
+        "camera_movement": "slow crane rising to reveal vista | gentle dolly forward through environment | static with natural elements moving",
+        "shot_scale": "wide establishing shot | extreme wide showing scale",
+        "cinematic_style": "epic fantasy aesthetic | documentary naturalism | dreamlike ethereal",
+        "color_palette": "warm golden and amber tones | cool blues and teals | desaturated earth tones",
+        "motion_speed": "slow motion at 50% | real-time | time-lapse effect",
+        "natural_sounds": "wind through trees | distant thunder | water flowing | bird calls",
+        "musical_underscore": "ambient orchestral swell | minimal piano | ethnic flutes",
+        "duration_seconds": "15 | 18 | 20"
+      },
+      "negatives": [
+        "modern elements",
+        "harsh lighting",
+        "static composition",
+        "flat depth"
+      ],
+      "duration_hint": "15-20 seconds",
+      "notes": "Emphasize depth and scale. Use atmospheric effects for mood. Deep focus keeps everything sharp."
+    },
+    {
+      "name": "Character Performance - Emotional",
+      "category": "character",
+      "description": "Intimate character moment with emotional depth and subtle performance",
+      "template": "[SCENE] {setting} with {mood_lighting}\n[SUBJECT] {character_description} showing {emotional_state}\n[ACTION] {character_action} revealing {internal_emotion}\n[CAMERA] {shot_choice} with {focus_technique}\n[LOOK] {visual_mood} with {color_treatment}\n[MOTION] {movement_quality}\n[AUDIO] {ambient_sound} with {character_sounds} and {music_mood}\n[NEGATIVES] No overacting, no perfect lighting, no static expressions\n[DURATION] {duration_seconds} seconds",
+      "variables": {
+        "setting": "dimly lit apartment at night | rain-streaked window cafe | quiet park bench at dusk",
+        "mood_lighting": "single desk lamp casting shadows | soft window light | streetlight glow",
+        "character_description": "middle-aged woman with tired eyes | young man in rumpled clothes | elderly person with weathered hands",
+        "emotional_state": "quiet contemplation | suppressed grief | cautious hope",
+        "character_action": "slowly sips coffee while staring into distance | runs fingers through hair nervously | closes eyes and takes deep breath",
+        "internal_emotion": "unspoken longing | building resolve | releasing tension",
+        "shot_choice": "close-up on face | medium shot showing body language | extreme close-up on eyes",
+        "focus_technique": "rack focus from object to face | shallow depth isolating subject | slow focus pull",
+        "visual_mood": "melancholic introspection | quiet strength | vulnerable openness",
+        "color_treatment": "desaturated with warm highlights | cool blue tones | natural with lifted shadows",
+        "movement_quality": "minimal, subtle gestures | natural fidgeting | stillness with micro-expressions",
+        "ambient_sound": "distant traffic | rain on window | clock ticking | silence",
+        "character_sounds": "soft sigh | cup setting down | fabric rustling",
+        "music_mood": "minimal piano | ambient strings | no music for raw emotion",
+        "duration_seconds": "10 | 12 | 15"
+      },
+      "negatives": [
+        "overacting",
+        "perfect lighting",
+        "static expressions",
+        "theatrical gestures"
+      ],
+      "duration_hint": "10-15 seconds",
+      "notes": "Focus on micro-expressions and subtle gestures. Imperfect lighting adds realism and mood."
+    },
+    {
+      "name": "Macro Product Detail",
+      "category": "product",
+      "description": "Extreme close-up product details with texture and material emphasis",
+      "template": "[SCENE] {macro_environment} with {lighting_setup}\n[SUBJECT] {product_detail} showing {material_characteristics}\n[ACTION] {detail_reveal} highlighting {texture_elements}\n[CAMERA] Extreme close-up with {camera_movement}, shallow depth of field\n[LOOK] {visual_style} with {color_emphasis}\n[MOTION] {motion_type}\n[AUDIO] {subtle_sounds} with {ambient_bed}\n[NEGATIVES] No dust, no imperfections unless intentional, no harsh reflections\n[DURATION] {duration_seconds} seconds",
+      "variables": {
+        "macro_environment": "black velvet background | white seamless | natural wood surface | reflective glass",
+        "lighting_setup": "dramatic side lighting revealing texture | soft diffused overhead | rim lighting for edge definition",
+        "product_detail": "watch mechanism with visible gears | fabric weave showing thread detail | leather grain and stitching",
+        "material_characteristics": "metallic sheen and reflections | organic texture | precision engineering",
+        "detail_reveal": "slow focus pull across surface | gentle rotation revealing angles | light sweep across texture",
+        "texture_elements": "micro-scratches and patina | thread count and weave | crystalline structure",
+        "camera_movement": "slow push-in | gentle drift across surface | static with focus breathing",
+        "visual_style": "technical precision | artistic abstraction | luxury premium",
+        "color_emphasis": "monochrome highlighting form | selective color on key element | natural material tones",
+        "motion_type": "extremely slow motion | real-time detail | subtle focus shifts",
+        "subtle_sounds": "mechanical ticking | fabric rustle | metallic resonance",
+        "ambient_bed": "minimal electronic tone | silence | soft ambient pad",
+        "duration_seconds": "8 | 10 | 12"
+      },
+      "negatives": [
+        "dust particles",
+        "unintentional imperfections",
+        "harsh reflections",
+        "motion blur"
+      ],
+      "duration_hint": "8-12 seconds",
+      "notes": "Extreme shallow depth of field isolates details. Lighting is critical for texture revelation."
+    },
+    {
+      "name": "Abstract Motion Graphics",
+      "category": "abstract",
+      "description": "Abstract visual design with geometric or organic motion patterns",
+      "template": "[SCENE] {abstract_environment} with {spatial_characteristics}\n[SUBJECT] {visual_elements} exhibiting {pattern_behavior}\n[ACTION] {motion_pattern} creating {visual_rhythm}\n[CAMERA] {camera_perspective} with {movement_style}\n[LOOK] {aesthetic_approach} with {color_scheme}\n[MOTION] {motion_characteristics}\n[AUDIO] {sound_design} with {musical_elements}\n[NEGATIVES] No representational objects, no static frames, no jarring transitions\n[DURATION] {duration_seconds} seconds",
+      "variables": {
+        "abstract_environment": "infinite black void | white minimalist space | gradient color field | particle-filled atmosphere",
+        "spatial_characteristics": "three-dimensional depth | flat graphic plane | impossible geometry",
+        "visual_elements": "geometric shapes morphing | flowing liquid forms | particle systems | light beams",
+        "pattern_behavior": "rhythmic pulsing | organic growth | mathematical precision | chaotic emergence",
+        "motion_pattern": "elements converge then disperse | continuous rotation and transformation | wave-like undulation",
+        "visual_rhythm": "steady mechanical beat | organic breathing | accelerating intensity",
+        "camera_perspective": "orbital rotation around center | push through elements | static observational",
+        "movement_style": "smooth continuous | staccato rhythmic | fluid organic",
+        "aesthetic_approach": "minimalist geometric | complex layered | organic flowing",
+        "color_scheme": "monochrome with accent | vibrant rainbow spectrum | analogous color harmony | complementary contrast",
+        "motion_characteristics": "perfectly looped | evolving progression | synchronized choreography",
+        "sound_design": "synthesized tones matching motion | ambient textures | rhythmic pulses",
+        "musical_elements": "minimal electronic | ambient soundscape | no music",
+        "duration_seconds": "10 | 12 | 15"
+      },
+      "negatives": [
+        "representational objects",
+        "static frames",
+        "jarring transitions",
+        "random chaos"
+      ],
+      "duration_hint": "10-15 seconds",
+      "notes": "Perfect for brand bumpers, transitions, backgrounds. Consider looping potential."
+    },
+    {
+      "name": "Brand Bumper - Logo Reveal",
+      "category": "brand",
+      "description": "Short, impactful brand logo reveal with cinematic treatment",
+      "template": "[SCENE] {environment_style} with {atmosphere}\n[SUBJECT] {brand_element} with {visual_treatment}\n[ACTION] {reveal_sequence} culminating in {final_state}\n[CAMERA] {camera_approach} with {shot_progression}\n[LOOK] {brand_aesthetic} with {color_identity}\n[MOTION] {motion_style}\n[AUDIO] {sound_signature} with {musical_sting}\n[NEGATIVES] No clutter, no slow pacing, no unclear branding\n[DURATION] {duration_seconds} seconds",
+      "variables": {
+        "environment_style": "abstract geometric space | natural environment | urban setting | minimal void",
+        "atmosphere": "energetic and dynamic | sophisticated and elegant | bold and powerful",
+        "brand_element": "logo assembling from particles | wordmark emerging from light | icon transforming",
+        "visual_treatment": "metallic with reflections | glowing energy | solid confident | organic natural",
+        "reveal_sequence": "elements fly in and lock into place | fade up from darkness | morph from abstract to logo",
+        "final_state": "logo centered and prominent | logo with tagline | animated logo loop",
+        "camera_approach": "push-in to logo | orbit around reveal | static with elements moving",
+        "shot_progression": "wide to close-up | single focused shot | multiple angle cuts",
+        "brand_aesthetic": "tech modern | luxury premium | playful creative | professional corporate",
+        "color_identity": "brand colors with accent | monochrome sophisticated | vibrant energetic",
+        "motion_style": "quick and punchy | smooth and elegant | powerful and bold",
+        "sound_signature": "whoosh and impact | subtle elegant tone | powerful bass hit",
+        "musical_sting": "short melodic phrase | single impactful note | layered harmonic",
+        "duration_seconds": "3 | 5 | 7"
+      },
+      "negatives": [
+        "visual clutter",
+        "slow pacing",
+        "unclear branding",
+        "competing elements"
+      ],
+      "duration_hint": "3-7 seconds",
+      "notes": "Keep it short and impactful. Audio is critical for brand recognition. Ensure logo is clearly visible."
+    },
+    {
+      "name": "Music Video Loop",
+      "category": "music",
+      "description": "Rhythmic visual loop synchronized to music beat and mood",
+      "template": "[SCENE] {visual_world} with {lighting_mood}\n[SUBJECT] {visual_focus} exhibiting {rhythmic_behavior}\n[ACTION] {looping_action} synchronized to {beat_pattern}\n[CAMERA] {camera_pattern} with {movement_sync}\n[LOOK] {music_genre_aesthetic} with {color_mood}\n[MOTION] {motion_sync}\n[AUDIO] {music_style} with {beat_emphasis} at {tempo}\n[NEGATIVES] No off-beat movements, no visual-audio disconnect, no jarring loops\n[DURATION] {duration_seconds} seconds",
+      "variables": {
+        "visual_world": "neon-lit cyberpunk city | abstract particle space | natural landscape | surreal dreamscape",
+        "lighting_mood": "pulsing with beat | strobing rhythmic | smooth color shifts | dramatic contrast",
+        "visual_focus": "dancer moving rhythmically | abstract shapes pulsing | camera moving through space | light patterns",
+        "rhythmic_behavior": "pulsing on beat | flowing between beats | accenting downbeats",
+        "looping_action": "seamless 360-degree rotation | repeating gesture cycle | continuous forward motion",
+        "beat_pattern": "4/4 steady rhythm | syncopated groove | triplet feel",
+        "camera_pattern": "rhythmic push-pull | orbital on beat | static with subject movement",
+        "movement_sync": "camera moves on downbeat | smooth continuous | staccato rhythmic",
+        "music_genre_aesthetic": "electronic minimal | hip-hop urban | indie dreamy | pop vibrant",
+        "color_mood": "saturated neon | desaturated moody | warm organic | cool synthetic",
+        "motion_sync": "perfectly on beat | slightly ahead of beat | flowing between beats",
+        "music_style": "electronic dance | hip-hop beat | indie rock | ambient atmospheric",
+        "beat_emphasis": "strong kick drum | snare hits | hi-hat pattern",
+        "tempo": "120 BPM | 90 BPM | 140 BPM",
+        "duration_seconds": "8 | 12 | 16"
+      },
+      "negatives": [
+        "off-beat movements",
+        "visual-audio disconnect",
+        "jarring loop points",
+        "static visuals"
+      ],
+      "duration_hint": "8-16 seconds (divisible by 4 for musical phrasing)",
+      "notes": "Ensure loop point is seamless. Sync key visual events to musical beats. Consider 4, 8, or 16 bar loops."
+    },
+    {
+      "name": "Tutorial Explainer",
+      "category": "tutorial",
+      "description": "Clear instructional content with step-by-step visual demonstration",
+      "template": "[SCENE] {tutorial_setting} with {visibility_lighting}\n[SUBJECT] {demonstration_focus} showing {instructional_element}\n[ACTION] {step_sequence} demonstrating {technique}\n[CAMERA] {instructional_framing} with {clarity_focus}\n[LOOK] {educational_style} with {clear_visibility}\n[MOTION] {pacing_style}\n[AUDIO] {instruction_audio} with {demonstration_sounds}\n[NEGATIVES] No unclear steps, no fast movements, no poor visibility\n[DURATION] {duration_seconds} seconds",
+      "variables": {
+        "tutorial_setting": "clean workspace with organized tools | kitchen counter | craft table | computer desk",
+        "visibility_lighting": "bright even illumination | soft overhead with fill | natural window light",
+        "demonstration_focus": "hands performing technique | tool in use | process unfolding | interface interaction",
+        "instructional_element": "proper grip and positioning | step-by-step assembly | technique execution",
+        "step_sequence": "first position tool, then apply pressure, finally complete action | measure, cut, assemble",
+        "technique": "proper form and safety | efficient method | professional approach",
+        "instructional_framing": "overhead view showing full workspace | close-up on hands | medium shot with context",
+        "clarity_focus": "rack focus highlighting key element | deep focus showing all steps | zoom in on detail",
+        "educational_style": "professional instructional | friendly casual | technical precise",
+        "clear_visibility": "high contrast for clarity | natural realistic | clean minimal",
+        "pacing_style": "deliberate and clear | real-time demonstration | key moments in slow motion",
+        "instruction_audio": "clear voice-over explaining steps | on-screen text with ambient sound | demonstration sounds only",
+        "demonstration_sounds": "tool sounds | material interactions | process audio",
+        "duration_seconds": "15 | 20 | 25"
+      },
+      "negatives": [
+        "unclear steps",
+        "fast movements",
+        "poor visibility",
+        "confusing angles"
+      ],
+      "duration_hint": "15-25 seconds per step",
+      "notes": "Clarity is paramount. Use multiple angles if needed. Pace should allow viewers to follow along."
+    },
+    {
+      "name": "VFX Composite Base",
+      "category": "vfx",
+      "description": "Clean plate or element for VFX compositing with proper camera tracking",
+      "template": "[SCENE] {environment_type} with {lighting_consistency}\n[SUBJECT] {scene_elements} with {tracking_markers}\n[ACTION] {camera_motion} maintaining {stability_level}\n[CAMERA] {camera_movement} with {tracking_friendly_motion}\n[LOOK] {neutral_grade} with {dynamic_range}\n[MOTION] {smooth_motion}\n[AUDIO] {production_sound}\n[NEGATIVES] No motion blur, no auto-exposure changes, no focus breathing\n[DURATION] {duration_seconds} seconds",
+      "variables": {
+        "environment_type": "outdoor location with sky | indoor set with walls | green screen stage | practical location",
+        "lighting_consistency": "consistent daylight | controlled studio lighting | mixed practical sources",
+        "scene_elements": "actor in position | empty plate | reference objects | tracking markers visible",
+        "tracking_markers": "high-contrast markers on walls | natural feature points | grid pattern",
+        "camera_motion": "locked-off static | smooth dolly movement | controlled pan | handheld with stabilization",
+        "stability_level": "rock-solid tripod | smooth gimbal | controlled handheld",
+        "camera_movement": "static locked-off | slow controlled dolly | smooth tracking",
+        "tracking_friendly_motion": "consistent speed | no sudden movements | predictable path",
+        "neutral_grade": "flat color profile | log encoding | standard Rec709",
+        "dynamic_range": "preserved highlights and shadows | even exposure | HDR capture",
+        "smooth_motion": "constant velocity | no acceleration changes | steady frame rate",
+        "production_sound": "reference audio | sync sound | guide track",
+        "duration_seconds": "10 | 15 | 20"
+      },
+      "negatives": [
+        "motion blur",
+        "auto-exposure changes",
+        "focus breathing",
+        "rolling shutter"
+      ],
+      "duration_hint": "10-20 seconds",
+      "notes": "Prioritize tracking-friendly motion and consistent lighting. Avoid auto-exposure and auto-focus."
+    },
+    {
+      "name": "Motion Graphics Title",
+      "category": "motion_graphics",
+      "description": "Animated title sequence with kinetic typography and graphic elements",
+      "template": "[SCENE] {graphic_environment} with {spatial_design}\n[SUBJECT] {text_elements} with {graphic_accompaniment}\n[ACTION] {animation_sequence} creating {visual_impact}\n[CAMERA] {camera_relationship} with {perspective_shift}\n[LOOK] {design_style} with {color_system}\n[MOTION] {animation_style}\n[AUDIO] {sound_design} with {musical_bed}\n[NEGATIVES] No illegible text, no cluttered composition, no slow pacing\n[DURATION] {duration_seconds} seconds",
+      "variables": {
+        "graphic_environment": "three-dimensional space | flat graphic plane | layered depth | infinite grid",
+        "spatial_design": "centered symmetrical | dynamic asymmetrical | depth-based hierarchy",
+        "text_elements": "bold sans-serif title | elegant serif headline | modern geometric type",
+        "graphic_accompaniment": "geometric shapes | particle effects | line work | abstract forms",
+        "animation_sequence": "text flies in and settles | builds letter by letter | fades up with scale | slides and locks",
+        "visual_impact": "bold statement | elegant reveal | energetic entrance | sophisticated emergence",
+        "camera_relationship": "static with elements moving | camera pushes through text | orbital around title",
+        "perspective_shift": "2D to 3D transformation | parallax depth | isometric to perspective",
+        "design_style": "modern minimal | bold graphic | elegant refined | tech futuristic",
+        "color_system": "monochrome with accent | brand color palette | gradient spectrum | high contrast",
+        "animation_style": "smooth easing | bouncy energetic | linear mechanical | organic flowing",
+        "sound_design": "whooshes and impacts | subtle transitions | bold hits | elegant tones",
+        "musical_bed": "minimal electronic | orchestral swell | no music | ambient texture",
+        "duration_seconds": "5 | 7 | 10"
+      },
+      "negatives": [
+        "illegible text",
+        "cluttered composition",
+        "slow pacing",
+        "competing elements"
+      ],
+      "duration_hint": "5-10 seconds",
+      "notes": "Text must remain legible throughout. Use animation to guide viewer attention. Audio sync is critical."
+    }
+  ]
+}

@@ -1,0 +1,63 @@
+import OpenAI from 'openai';
+
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
+});
+
+export interface ImageGenerationParams {
+  prompt: string;
+  size?: '1024x1024' | '1792x1024' | '1024x1792';
+  quality?: 'standard' | 'hd';
+  style?: 'vivid' | 'natural';
+}
+
+export interface ImageGenerationResult {
+  id: string;
+  url: string;
+  revised_prompt?: string;
+  created_at: number;
+}
+
+/**
+ * Generate an image using GPT Image 1 API
+ * CRITICAL: Uses model "gpt-image-1" NOT "dall-e-3"
+ */
+export async function generateImage(params: ImageGenerationParams): Promise<ImageGenerationResult> {
+  try {
+    const response = await openai.images.generate({
+      model: 'gpt-image-1',  // CRITICAL: Using gpt-image-1 model as required
+      prompt: params.prompt,
+      n: 1,
+      size: params.size || '1024x1024',
+      quality: params.quality || 'standard',
+      style: params.style || 'vivid',
+    } as any);
+
+    const image = response.data[0];
+    
+    return {
+      id: `image_${Date.now()}`,
+      url: image.url || '',
+      revised_prompt: image.revised_prompt,
+      created_at: Date.now(),
+    };
+  } catch (error) {
+    console.error('Image generation error:', error);
+    throw error;
+  }
+}
+
+/**
+ * Generate multiple storyboard images for pre-visualization
+ */
+export async function generateStoryboard(prompts: string[]): Promise<ImageGenerationResult[]> {
+  try {
+    const results = await Promise.all(
+      prompts.map(prompt => generateImage({ prompt, size: '1024x1024' }))
+    );
+    return results;
+  } catch (error) {
+    console.error('Storyboard generation error:', error);
+    throw error;
+  }
+}

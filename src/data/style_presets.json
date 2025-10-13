@@ -1,0 +1,662 @@
+{
+  "version": "1.0",
+  "description": "Cinematic style presets for Sora 2 with comprehensive look, lighting, and audio specifications",
+  "presets": [
+    {
+      "name": "Golden Hour Anamorphic",
+      "category": "cinematic",
+      "description": "Warm, cinematic look with anamorphic characteristics and golden hour lighting",
+      "cinematography": {
+        "lens": "anamorphic",
+        "focal_length": "50mm equivalent",
+        "aperture": "f/2.8",
+        "aspect_ratio": "2.39:1",
+        "movement": "slow dolly or static",
+        "framing": "rule of thirds with breathing room"
+      },
+      "lighting": {
+        "key_light": "warm golden sun at 15-30 degree angle",
+        "fill_light": "soft ambient bounce from environment",
+        "back_light": "strong rim light from sun",
+        "color_temperature": "3200K-4500K warm",
+        "contrast_ratio": "4:1 moderate contrast",
+        "quality": "soft directional with long shadows"
+      },
+      "color": {
+        "palette": "warm oranges, golden yellows, deep amber",
+        "saturation": "moderately saturated, rich but natural",
+        "highlights": "warm cream, slight glow",
+        "shadows": "warm brown, lifted slightly",
+        "midtones": "golden amber shift",
+        "grading_style": "teal shadows, orange highlights"
+      },
+      "atmosphere": {
+        "haze": "subtle atmospheric haze",
+        "particles": "dust motes visible in light beams",
+        "depth": "strong depth cues from lighting",
+        "mood": "nostalgic, romantic, epic"
+      },
+      "grain": {
+        "amount": "subtle 35mm film grain",
+        "size": "fine grain structure",
+        "character": "organic, film-like"
+      },
+      "audio_bed_hint": "warm acoustic guitar, soft strings, intimate vocals, natural ambience"
+    },
+    {
+      "name": "Noir High-Contrast",
+      "category": "dramatic",
+      "description": "Classic film noir with deep shadows, dramatic lighting, and high contrast",
+      "cinematography": {
+        "lens": "standard to slight wide",
+        "focal_length": "35-50mm equivalent",
+        "aperture": "f/4-f/5.6",
+        "aspect_ratio": "1.85:1 or 16:9",
+        "movement": "static or slow deliberate moves",
+        "framing": "dramatic angles, dutch tilts, strong diagonals"
+      },
+      "lighting": {
+        "key_light": "hard single source, often from side or below",
+        "fill_light": "minimal to none, embrace shadows",
+        "back_light": "strong separation light",
+        "color_temperature": "tungsten 3200K or cooler",
+        "contrast_ratio": "8:1 or higher, dramatic",
+        "quality": "hard, directional, creating defined shadows"
+      },
+      "color": {
+        "palette": "monochrome or near-monochrome, deep blacks",
+        "saturation": "heavily desaturated or black and white",
+        "highlights": "bright whites, sometimes blown",
+        "shadows": "crushed blacks, deep and mysterious",
+        "midtones": "compressed, high contrast",
+        "grading_style": "high contrast black and white or near-monochrome"
+      },
+      "atmosphere": {
+        "haze": "smoke or fog for volumetric light beams",
+        "particles": "cigarette smoke, steam, rain",
+        "depth": "created through lighting contrast",
+        "mood": "mysterious, dangerous, tense"
+      },
+      "grain": {
+        "amount": "moderate to heavy grain",
+        "size": "medium grain, visible texture",
+        "character": "gritty, film noir aesthetic"
+      },
+      "audio_bed_hint": "jazz saxophone, double bass, rain ambience, distant sirens, minimal dialogue"
+    },
+    {
+      "name": "Pastel Commercial",
+      "category": "commercial",
+      "description": "Soft, approachable commercial look with pastel colors and even lighting",
+      "cinematography": {
+        "lens": "standard prime",
+        "focal_length": "50mm equivalent",
+        "aperture": "f/2.8-f/4",
+        "aspect_ratio": "16:9",
+        "movement": "smooth, controlled, friendly",
+        "framing": "centered, balanced, inviting"
+      },
+      "lighting": {
+        "key_light": "large soft source, frontal or slight angle",
+        "fill_light": "generous fill, minimal shadows",
+        "back_light": "soft edge separation",
+        "color_temperature": "5500K neutral to slightly warm",
+        "contrast_ratio": "2:1 very low contrast",
+        "quality": "soft, diffused, flattering"
+      },
+      "color": {
+        "palette": "soft pinks, mint greens, baby blues, lavender",
+        "saturation": "moderate, pleasant but not overwhelming",
+        "highlights": "soft whites with pastel tint",
+        "shadows": "lifted, pastel-tinted",
+        "midtones": "pastel color shift",
+        "grading_style": "lifted shadows, pastel color overlay"
+      },
+      "atmosphere": {
+        "haze": "minimal, clean air",
+        "particles": "none or very subtle",
+        "depth": "moderate, friendly",
+        "mood": "cheerful, approachable, optimistic"
+      },
+      "grain": {
+        "amount": "minimal to none",
+        "size": "very fine if present",
+        "character": "clean, digital"
+      },
+      "audio_bed_hint": "upbeat acoustic pop, ukulele, light percussion, cheerful vocals"
+    },
+    {
+      "name": "Cyberpunk Neon",
+      "category": "sci-fi",
+      "description": "Futuristic cyberpunk aesthetic with neon lighting and urban grit",
+      "cinematography": {
+        "lens": "wide to standard",
+        "focal_length": "24-35mm equivalent",
+        "aperture": "f/2.8 for bokeh",
+        "aspect_ratio": "2.39:1 anamorphic",
+        "movement": "handheld or gimbal, dynamic",
+        "framing": "urban compositions, reflections, depth"
+      },
+      "lighting": {
+        "key_light": "colored neon sources, multiple colors",
+        "fill_light": "ambient city glow, mixed colors",
+        "back_light": "neon rim lights, colored edges",
+        "color_temperature": "mixed sources, 3200K-8000K",
+        "contrast_ratio": "6:1 high contrast",
+        "quality": "hard neon sources, soft ambient fill"
+      },
+      "color": {
+        "palette": "electric blue, hot pink, toxic green, deep purple",
+        "saturation": "highly saturated neon colors",
+        "highlights": "blown neon glows, chromatic aberration",
+        "shadows": "deep blue-black, teal tint",
+        "midtones": "color-shifted by neon sources",
+        "grading_style": "teal and magenta split toning, high saturation"
+      },
+      "atmosphere": {
+        "haze": "urban smog, volumetric fog",
+        "particles": "rain, steam, neon reflections",
+        "depth": "layered neon signs, atmospheric perspective",
+        "mood": "dystopian, energetic, dangerous"
+      },
+      "grain": {
+        "amount": "moderate digital noise",
+        "size": "fine to medium",
+        "character": "digital, slightly chromatic"
+      },
+      "audio_bed_hint": "synthwave, electronic bass, cyberpunk ambience, rain, distant traffic"
+    },
+    {
+      "name": "Documentary Handheld",
+      "category": "documentary",
+      "description": "Authentic documentary style with natural lighting and handheld camera work",
+      "cinematography": {
+        "lens": "zoom or standard prime",
+        "focal_length": "24-70mm range",
+        "aperture": "f/4-f/8 for depth",
+        "aspect_ratio": "16:9",
+        "movement": "handheld with natural shake",
+        "framing": "reactive, following action, imperfect"
+      },
+      "lighting": {
+        "key_light": "available light, natural sources",
+        "fill_light": "bounce from environment",
+        "back_light": "natural separation from environment",
+        "color_temperature": "mixed, realistic 3200K-6500K",
+        "contrast_ratio": "varies, realistic 3:1-5:1",
+        "quality": "natural, uncontrolled, authentic"
+      },
+      "color": {
+        "palette": "natural, realistic colors",
+        "saturation": "normal to slightly desaturated",
+        "highlights": "natural, sometimes clipped",
+        "shadows": "natural fall-off",
+        "midtones": "neutral, realistic",
+        "grading_style": "minimal grading, natural look"
+      },
+      "atmosphere": {
+        "haze": "natural atmospheric conditions",
+        "particles": "dust, natural elements",
+        "depth": "natural depth cues",
+        "mood": "authentic, immediate, real"
+      },
+      "grain": {
+        "amount": "moderate, realistic",
+        "size": "medium, video-like",
+        "character": "digital sensor noise"
+      },
+      "audio_bed_hint": "natural location sound, ambient noise, minimal music, authentic dialogue"
+    },
+    {
+      "name": "Luxury Premium",
+      "category": "commercial",
+      "description": "High-end luxury aesthetic with perfect lighting and refined color",
+      "cinematography": {
+        "lens": "prime lenses, sharp",
+        "focal_length": "50-85mm equivalent",
+        "aperture": "f/2.8-f/4",
+        "aspect_ratio": "2.39:1 or 16:9",
+        "movement": "slow, deliberate, smooth",
+        "framing": "precise, balanced, elegant"
+      },
+      "lighting": {
+        "key_light": "large soft source, perfect placement",
+        "fill_light": "controlled, subtle",
+        "back_light": "elegant rim light",
+        "color_temperature": "5500K neutral",
+        "contrast_ratio": "3:1 controlled contrast",
+        "quality": "soft, flattering, perfect"
+      },
+      "color": {
+        "palette": "rich blacks, champagne golds, deep burgundy, navy",
+        "saturation": "controlled, sophisticated",
+        "highlights": "creamy whites, subtle glow",
+        "shadows": "rich blacks, detail retained",
+        "midtones": "neutral with slight warmth",
+        "grading_style": "refined, subtle teal shadows, warm highlights"
+      },
+      "atmosphere": {
+        "haze": "minimal, clean",
+        "particles": "none, pristine",
+        "depth": "elegant, controlled",
+        "mood": "sophisticated, exclusive, refined"
+      },
+      "grain": {
+        "amount": "very subtle or none",
+        "size": "extremely fine",
+        "character": "clean, premium"
+      },
+      "audio_bed_hint": "classical strings, minimal piano, sophisticated jazz, silence for impact"
+    },
+    {
+      "name": "Tech Minimalist",
+      "category": "tech",
+      "description": "Clean, modern tech aesthetic with precise lighting and minimal color",
+      "cinematography": {
+        "lens": "sharp prime",
+        "focal_length": "35-50mm equivalent",
+        "aperture": "f/4-f/8 for sharpness",
+        "aspect_ratio": "16:9",
+        "movement": "precise, controlled, robotic",
+        "framing": "geometric, centered, symmetrical"
+      },
+      "lighting": {
+        "key_light": "even, diffused, shadowless",
+        "fill_light": "complete fill, no shadows",
+        "back_light": "subtle edge definition",
+        "color_temperature": "6500K cool white",
+        "contrast_ratio": "1.5:1 very low",
+        "quality": "soft, even, clinical"
+      },
+      "color": {
+        "palette": "white, light gray, cool blue accents",
+        "saturation": "very low, near monochrome",
+        "highlights": "pure white",
+        "shadows": "light gray, lifted",
+        "midtones": "neutral gray",
+        "grading_style": "desaturated, cool tint, high key"
+      },
+      "atmosphere": {
+        "haze": "none, crystal clear",
+        "particles": "none",
+        "depth": "minimal, flat",
+        "mood": "clean, modern, precise"
+      },
+      "grain": {
+        "amount": "none",
+        "size": "n/a",
+        "character": "perfectly clean"
+      },
+      "audio_bed_hint": "minimal electronic tones, UI sounds, silence, ambient white noise"
+    },
+    {
+      "name": "Vintage Film",
+      "category": "vintage",
+      "description": "Classic film look with period-appropriate color and texture",
+      "cinematography": {
+        "lens": "vintage character",
+        "focal_length": "40-50mm equivalent",
+        "aperture": "f/2.8-f/4",
+        "aspect_ratio": "4:3 or 1.85:1",
+        "movement": "smooth, classical",
+        "framing": "traditional composition"
+      },
+      "lighting": {
+        "key_light": "classic three-point setup",
+        "fill_light": "traditional fill ratio",
+        "back_light": "strong separation",
+        "color_temperature": "3200K tungsten",
+        "contrast_ratio": "4:1 classic",
+        "quality": "controlled, studio-like"
+      },
+      "color": {
+        "palette": "faded colors, warm shift",
+        "saturation": "reduced, vintage fade",
+        "highlights": "warm cream, slight halation",
+        "shadows": "warm brown, lifted",
+        "midtones": "warm color shift",
+        "grading_style": "faded film emulation, warm overall"
+      },
+      "atmosphere": {
+        "haze": "slight diffusion",
+        "particles": "subtle dust",
+        "depth": "classic depth cues",
+        "mood": "nostalgic, timeless, warm"
+      },
+      "grain": {
+        "amount": "heavy film grain",
+        "size": "medium to large",
+        "character": "organic film grain, dancing"
+      },
+      "audio_bed_hint": "period-appropriate music, vinyl crackle, warm analog sound"
+    },
+    {
+      "name": "Bold Graphic",
+      "category": "graphic",
+      "description": "High-impact graphic style with bold colors and strong contrast",
+      "cinematography": {
+        "lens": "standard to wide",
+        "focal_length": "28-50mm equivalent",
+        "aperture": "f/5.6-f/8 for sharpness",
+        "aspect_ratio": "16:9 or 1:1",
+        "movement": "dynamic, energetic",
+        "framing": "bold, graphic compositions"
+      },
+      "lighting": {
+        "key_light": "hard, directional",
+        "fill_light": "minimal, embrace contrast",
+        "back_light": "strong colored rim",
+        "color_temperature": "mixed, creative",
+        "contrast_ratio": "8:1 high contrast",
+        "quality": "hard, graphic shadows"
+      },
+      "color": {
+        "palette": "primary colors, bold secondaries",
+        "saturation": "highly saturated, punchy",
+        "highlights": "bright, sometimes clipped",
+        "shadows": "deep, saturated",
+        "midtones": "vibrant, color-shifted",
+        "grading_style": "high saturation, complementary color contrast"
+      },
+      "atmosphere": {
+        "haze": "minimal, clear",
+        "particles": "none or graphic elements",
+        "depth": "created through color and contrast",
+        "mood": "energetic, bold, confident"
+      },
+      "grain": {
+        "amount": "minimal",
+        "size": "fine",
+        "character": "clean, sharp"
+      },
+      "audio_bed_hint": "energetic pop, electronic, bold percussion, confident vocals"
+    },
+    {
+      "name": "Moody Atmospheric",
+      "category": "dramatic",
+      "description": "Dark, atmospheric look with volumetric lighting and mystery",
+      "cinematography": {
+        "lens": "fast prime for low light",
+        "focal_length": "35-50mm equivalent",
+        "aperture": "f/1.4-f/2.8",
+        "aspect_ratio": "2.39:1",
+        "movement": "slow, deliberate, tense",
+        "framing": "shadowy, mysterious"
+      },
+      "lighting": {
+        "key_light": "single motivated source, often practical",
+        "fill_light": "very minimal, embrace darkness",
+        "back_light": "subtle rim or none",
+        "color_temperature": "3200K warm or 8000K cool",
+        "contrast_ratio": "10:1 very high",
+        "quality": "hard point sources, volumetric beams"
+      },
+      "color": {
+        "palette": "deep blues, warm oranges, desaturated",
+        "saturation": "low overall, selective color",
+        "highlights": "warm or cool depending on source",
+        "shadows": "deep blue-black, crushed",
+        "midtones": "desaturated, color-shifted",
+        "grading_style": "low key, blue shadows, warm highlights"
+      },
+      "atmosphere": {
+        "haze": "heavy fog or smoke",
+        "particles": "dust, smoke, volumetric light beams",
+        "depth": "atmospheric perspective, layered haze",
+        "mood": "mysterious, tense, ominous"
+      },
+      "grain": {
+        "amount": "moderate to heavy",
+        "size": "medium",
+        "character": "gritty, textured"
+      },
+      "audio_bed_hint": "dark ambient, low drones, minimal piano, tense strings, silence"
+    },
+    {
+      "name": "Natural Documentary",
+      "category": "documentary",
+      "description": "Pure natural light aesthetic with authentic color and minimal intervention",
+      "cinematography": {
+        "lens": "zoom for flexibility",
+        "focal_length": "24-105mm range",
+        "aperture": "f/4-f/11 variable",
+        "aspect_ratio": "16:9",
+        "movement": "reactive, following subject",
+        "framing": "natural, unforced"
+      },
+      "lighting": {
+        "key_light": "sun or window light",
+        "fill_light": "natural bounce only",
+        "back_light": "natural rim from sun",
+        "color_temperature": "daylight 5600K or mixed",
+        "contrast_ratio": "natural, varies 3:1-6:1",
+        "quality": "natural, uncontrolled"
+      },
+      "color": {
+        "palette": "natural, realistic",
+        "saturation": "normal, true to life",
+        "highlights": "natural, sometimes harsh",
+        "shadows": "natural density",
+        "midtones": "neutral, accurate",
+        "grading_style": "minimal, color correction only"
+      },
+      "atmosphere": {
+        "haze": "natural atmospheric conditions",
+        "particles": "natural dust, pollen, weather",
+        "depth": "natural atmospheric perspective",
+        "mood": "authentic, truthful, immediate"
+      },
+      "grain": {
+        "amount": "natural sensor noise",
+        "size": "fine to medium",
+        "character": "digital, realistic"
+      },
+      "audio_bed_hint": "pure location sound, natural ambience, no music or minimal score"
+    },
+    {
+      "name": "Dreamy Soft Focus",
+      "category": "artistic",
+      "description": "Ethereal, dreamlike quality with soft focus and glowing highlights",
+      "cinematography": {
+        "lens": "vintage or diffusion filter",
+        "focal_length": "50-85mm equivalent",
+        "aperture": "f/1.4-f/2.8 wide open",
+        "aspect_ratio": "16:9 or 4:3",
+        "movement": "slow, floating, gentle",
+        "framing": "soft, romantic"
+      },
+      "lighting": {
+        "key_light": "soft, diffused, often backlit",
+        "fill_light": "gentle, wrapping",
+        "back_light": "strong, creating glow",
+        "color_temperature": "5000K-6500K cool to neutral",
+        "contrast_ratio": "2:1 very soft",
+        "quality": "diffused, glowing, halation"
+      },
+      "color": {
+        "palette": "pastels, soft whites, gentle colors",
+        "saturation": "low to moderate, delicate",
+        "highlights": "glowing, blooming, soft",
+        "shadows": "lifted, soft edges",
+        "midtones": "gentle color shift",
+        "grading_style": "lifted blacks, soft highlights, pastel overlay"
+      },
+      "atmosphere": {
+        "haze": "soft diffusion, dreamy",
+        "particles": "soft bokeh, light leaks",
+        "depth": "soft, compressed",
+        "mood": "dreamy, romantic, ethereal"
+      },
+      "grain": {
+        "amount": "subtle",
+        "size": "fine, soft",
+        "character": "gentle, film-like"
+      },
+      "audio_bed_hint": "ambient soundscapes, soft piano, ethereal vocals, gentle strings"
+    },
+    {
+      "name": "High-Key Fashion",
+      "category": "fashion",
+      "description": "Bright, clean fashion aesthetic with perfect skin tones and minimal shadows",
+      "cinematography": {
+        "lens": "portrait prime",
+        "focal_length": "85mm equivalent",
+        "aperture": "f/2.8-f/4",
+        "aspect_ratio": "4:5 or 16:9",
+        "movement": "smooth, elegant",
+        "framing": "fashion-forward, dynamic"
+      },
+      "lighting": {
+        "key_light": "large soft source, beauty lighting",
+        "fill_light": "generous, minimal shadows",
+        "back_light": "hair light, edge definition",
+        "color_temperature": "5500K neutral",
+        "contrast_ratio": "2:1 very low",
+        "quality": "soft, flattering, even"
+      },
+      "color": {
+        "palette": "clean whites, soft neutrals, accent colors",
+        "saturation": "moderate, controlled",
+        "highlights": "bright whites, clean",
+        "shadows": "lifted, minimal",
+        "midtones": "neutral, flattering skin tones",
+        "grading_style": "high key, lifted shadows, clean highlights"
+      },
+      "atmosphere": {
+        "haze": "minimal, clean",
+        "particles": "none",
+        "depth": "moderate, clean",
+        "mood": "fresh, clean, aspirational"
+      },
+      "grain": {
+        "amount": "minimal",
+        "size": "very fine",
+        "character": "clean, smooth"
+      },
+      "audio_bed_hint": "contemporary pop, electronic, upbeat, confident"
+    },
+    {
+      "name": "Gritty Urban",
+      "category": "urban",
+      "description": "Raw urban aesthetic with natural grit and street-level authenticity",
+      "cinematography": {
+        "lens": "wide to standard",
+        "focal_length": "24-50mm equivalent",
+        "aperture": "f/2.8-f/5.6",
+        "aspect_ratio": "16:9 or 2.39:1",
+        "movement": "handheld, energetic",
+        "framing": "street-level, dynamic"
+      },
+      "lighting": {
+        "key_light": "available light, mixed sources",
+        "fill_light": "natural bounce, minimal",
+        "back_light": "streetlights, neon, practical",
+        "color_temperature": "mixed 3200K-6500K",
+        "contrast_ratio": "5:1 moderate to high",
+        "quality": "hard mixed with soft, realistic"
+      },
+      "color": {
+        "palette": "desaturated with color pops, urban tones",
+        "saturation": "low overall, selective saturation",
+        "highlights": "natural, sometimes harsh",
+        "shadows": "deep, textured",
+        "midtones": "desaturated, gritty",
+        "grading_style": "desaturated, teal shadows, orange highlights"
+      },
+      "atmosphere": {
+        "haze": "urban smog, steam",
+        "particles": "dust, pollution, rain",
+        "depth": "layered urban environment",
+        "mood": "raw, authentic, energetic"
+      },
+      "grain": {
+        "amount": "heavy",
+        "size": "medium to large",
+        "character": "gritty, textured, digital noise"
+      },
+      "audio_bed_hint": "hip-hop, urban ambience, traffic, street sounds, contemporary beats"
+    },
+    {
+      "name": "Sci-Fi Clean",
+      "category": "sci-fi",
+      "description": "Futuristic clean aesthetic with cool tones and precise lighting",
+      "cinematography": {
+        "lens": "sharp modern prime",
+        "focal_length": "35-50mm equivalent",
+        "aperture": "f/4-f/8",
+        "aspect_ratio": "2.39:1",
+        "movement": "smooth, controlled, precise",
+        "framing": "geometric, symmetrical"
+      },
+      "lighting": {
+        "key_light": "cool LED sources, even",
+        "fill_light": "ambient cool light",
+        "back_light": "colored edge lights, blue/cyan",
+        "color_temperature": "6500K-8000K cool",
+        "contrast_ratio": "3:1 controlled",
+        "quality": "even, clinical, precise"
+      },
+      "color": {
+        "palette": "cool blues, cyans, white, steel gray",
+        "saturation": "low to moderate, cool shift",
+        "highlights": "cool white, slight blue",
+        "shadows": "blue-gray, lifted",
+        "midtones": "cool color shift",
+        "grading_style": "cool tones, blue shift, clean"
+      },
+      "atmosphere": {
+        "haze": "minimal, clean air",
+        "particles": "none or holographic elements",
+        "depth": "clean, precise",
+        "mood": "futuristic, clean, advanced"
+      },
+      "grain": {
+        "amount": "none to minimal",
+        "size": "very fine if present",
+        "character": "clean, digital"
+      },
+      "audio_bed_hint": "electronic ambient, UI sounds, futuristic tones, minimal score"
+    },
+    {
+      "name": "Warm Intimate",
+      "category": "intimate",
+      "description": "Cozy, intimate aesthetic with warm practical lighting and close framing",
+      "cinematography": {
+        "lens": "fast prime",
+        "focal_length": "50-85mm equivalent",
+        "aperture": "f/1.4-f/2.8",
+        "aspect_ratio": "16:9",
+        "movement": "minimal, intimate",
+        "framing": "close, personal"
+      },
+      "lighting": {
+        "key_light": "practical sources (lamps, candles, fire)",
+        "fill_light": "minimal, natural bounce",
+        "back_light": "subtle or none",
+        "color_temperature": "2700K-3200K very warm",
+        "contrast_ratio": "4:1 moderate",
+        "quality": "soft practical sources, warm glow"
+      },
+      "color": {
+        "palette": "warm oranges, amber, deep reds, browns",
+        "saturation": "moderate, warm and inviting",
+        "highlights": "warm glow, soft",
+        "shadows": "warm brown, natural",
+        "midtones": "warm shift, cozy",
+        "grading_style": "warm overall, lifted shadows, glowing highlights"
+      },
+      "atmosphere": {
+        "haze": "subtle, cozy",
+        "particles": "dust in light beams, intimate",
+        "depth": "shallow, intimate",
+        "mood": "cozy, intimate, personal"
+      },
+      "grain": {
+        "amount": "subtle to moderate",
+        "size": "fine to medium",
+        "character": "warm, organic"
+      },
+      "audio_bed_hint": "acoustic guitar, soft vocals, crackling fire, intimate ambience"
+    }
+  ]
+}
