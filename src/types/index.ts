@@ -21,51 +21,59 @@ export type PromptRecipe = z.infer<typeof PromptRecipeSchema>;
 
 // Style Preset Types
 export const StylePresetSchema = z.object({
-  id: z.string(),
   name: z.string(),
   category: z.string(),
   description: z.string(),
   cinematography: z.object({
-    camera: z.string(),
     lens: z.string(),
-    framing: z.string(),
+    focal_length: z.string(),
+    aperture: z.string(),
+    aspect_ratio: z.string(),
     movement: z.string(),
+    framing: z.string(),
   }),
   lighting: z.object({
-    setup: z.string(),
-    mood: z.string(),
-    time_of_day: z.string(),
+    key_light: z.string(),
+    fill_light: z.string(),
+    back_light: z.string(),
+    color_temperature: z.string(),
+    contrast_ratio: z.string(),
+    quality: z.string(),
   }),
   color: z.object({
     palette: z.string(),
-    grading: z.string(),
     saturation: z.string(),
+    highlights: z.string(),
+    shadows: z.string(),
+    midtones: z.string(),
+    grading_style: z.string(),
   }),
-  audio: z.object({
-    style: z.string(),
-    elements: z.array(z.string()),
+  atmosphere: z.object({
+    haze: z.string(),
+    particles: z.string(),
+    depth: z.string(),
+    mood: z.string(),
   }),
-  prompt_template: z.string(),
-  example_prompt: z.string(),
+  grain: z.object({
+    amount: z.string(),
+    size: z.string(),
+  }),
+  audio_bed_hint: z.string(),
 });
 
 export type StylePreset = z.infer<typeof StylePresetSchema>;
 
 // Shot Library Types
 export const ShotSchema = z.object({
-  id: z.string(),
-  name: z.string(),
+  id: z.number(),
   move: z.string(),
-  category: z.string(),
-  description: z.string(),
   framing: z.string(),
-  movement_type: z.string(),
-  speed: z.string(),
   purpose: z.string(),
   when_to_use: z.string(),
-  duration_range: z.string(),
   prompt_snippet: z.string(),
-  example: z.string(),
+  duration: z.string(),
+  speed: z.string(),
+  notes: z.string(),
 });
 
 export type Shot = z.infer<typeof ShotSchema>;
