@@ -128,7 +128,7 @@ export default function Home() {
                 Built with Next.js 14, TypeScript, Tailwind CSS, Sora 2, and GPT Image 1
               </p>
               <p className="text-xs mt-1">
-                Powered by OpenAI | {promptRecipes.length} Templates | {stylePresets.length} Presets | {shotLibrary.length} Shots
+                Powered by OpenAI | {promptRecipes.recipes.length} Templates | {stylePresets.presets.length} Presets | {shotLibrary.shots.length} Shots
               </p>
             </div>
             <div className="flex gap-4 text-sm">
