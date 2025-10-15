@@ -90,29 +90,29 @@ export function PresetGallery({ presets, onApplyPreset }: PresetGalleryProps) {
                 <div className="flex items-start gap-2">
                   <Camera className="w-4 h-4 text-purple-400 mt-0.5" />
                   <div>
-                    <p className="font-semibold">Camera</p>
-                    <p className="text-muted-foreground">{preset.cinematography.camera}</p>
+                    <p className="font-semibold">Lens</p>
+                    <p className="text-muted-foreground">{preset.cinematography.lens}</p>
                   </div>
                 </div>
                 <div className="flex items-start gap-2">
                   <Lightbulb className="w-4 h-4 text-yellow-400 mt-0.5" />
                   <div>
-                    <p className="font-semibold">Lighting</p>
-                    <p className="text-muted-foreground">{preset.lighting.mood}</p>
+                    <p className="font-semibold">Mood</p>
+                    <p className="text-muted-foreground">{preset.atmosphere.mood}</p>
                   </div>
                 </div>
                 <div className="flex items-start gap-2">
                   <Palette className="w-4 h-4 text-blue-400 mt-0.5" />
                   <div>
-                    <p className="font-semibold">Color</p>
-                    <p className="text-muted-foreground">{preset.color.grading}</p>
+                    <p className="font-semibold">Grading</p>
+                    <p className="text-muted-foreground">{preset.color.grading_style}</p>
                   </div>
                 </div>
                 <div className="flex items-start gap-2">
                   <Music className="w-4 h-4 text-green-400 mt-0.5" />
                   <div>
                     <p className="font-semibold">Audio</p>
-                    <p className="text-muted-foreground">{preset.audio.style}</p>
+                    <p className="text-muted-foreground truncate">{preset.audio_bed_hint.split(',')[0]}</p>
                   </div>
                 </div>
               </div>
@@ -166,8 +166,8 @@ export function PresetGallery({ presets, onApplyPreset }: PresetGalleryProps) {
                     Cinematography
                   </h3>
                   <div className="space-y-1 text-sm">
-                    <p><span className="text-muted-foreground">Camera:</span> {selectedPreset.cinematography.camera}</p>
                     <p><span className="text-muted-foreground">Lens:</span> {selectedPreset.cinematography.lens}</p>
+                    <p><span className="text-muted-foreground">Focal Length:</span> {selectedPreset.cinematography.focal_length}</p>
                     <p><span className="text-muted-foreground">Framing:</span> {selectedPreset.cinematography.framing}</p>
                     <p><span className="text-muted-foreground">Movement:</span> {selectedPreset.cinematography.movement}</p>
                   </div>
@@ -180,9 +180,9 @@ export function PresetGallery({ presets, onApplyPreset }: PresetGalleryProps) {
                     Lighting
                   </h3>
                   <div className="space-y-1 text-sm">
-                    <p><span className="text-muted-foreground">Setup:</span> {selectedPreset.lighting.setup}</p>
-                    <p><span className="text-muted-foreground">Mood:</span> {selectedPreset.lighting.mood}</p>
-                    <p><span className="text-muted-foreground">Time:</span> {selectedPreset.lighting.time_of_day}</p>
+                    <p><span className="text-muted-foreground">Quality:</span> {selectedPreset.lighting.quality}</p>
+                    <p><span className="text-muted-foreground">Color Temp:</span> {selectedPreset.lighting.color_temperature}</p>
+                    <p><span className="text-muted-foreground">Contrast:</span> {selectedPreset.lighting.contrast_ratio}</p>
                   </div>
                 </div>
 
@@ -194,8 +194,21 @@ export function PresetGallery({ presets, onApplyPreset }: PresetGalleryProps) {
                   </h3>
                   <div className="space-y-1 text-sm">
                     <p><span className="text-muted-foreground">Palette:</span> {selectedPreset.color.palette}</p>
-                    <p><span className="text-muted-foreground">Grading:</span> {selectedPreset.color.grading}</p>
+                    <p><span className="text-muted-foreground">Grading:</span> {selectedPreset.color.grading_style}</p>
                     <p><span className="text-muted-foreground">Saturation:</span> {selectedPreset.color.saturation}</p>
+                  </div>
+                </div>
+
+                {/* Atmosphere */}
+                <div className="space-y-2">
+                  <h3 className="font-semibold flex items-center gap-2">
+                    <Lightbulb className="w-4 h-4 text-purple-400" />
+                    Atmosphere
+                  </h3>
+                  <div className="space-y-1 text-sm">
+                    <p><span className="text-muted-foreground">Mood:</span> {selectedPreset.atmosphere.mood}</p>
+                    <p><span className="text-muted-foreground">Haze:</span> {selectedPreset.atmosphere.haze}</p>
+                    <p><span className="text-muted-foreground">Depth:</span> {selectedPreset.atmosphere.depth}</p>
                   </div>
                 </div>
 
@@ -203,25 +216,11 @@ export function PresetGallery({ presets, onApplyPreset }: PresetGalleryProps) {
                 <div className="space-y-2">
                   <h3 className="font-semibold flex items-center gap-2">
                     <Music className="w-4 h-4 text-green-400" />
-                    Audio
+                    Audio Suggestions
                   </h3>
-                  <div className="space-y-1 text-sm">
-                    <p><span className="text-muted-foreground">Style:</span> {selectedPreset.audio.style}</p>
-                    <p className="text-muted-foreground">Elements:</p>
-                    <ul className="list-disc list-inside ml-2">
-                      {selectedPreset.audio.elements.map((el, i) => (
-                        <li key={i}>{el}</li>
-                      ))}
-                    </ul>
+                  <div className="text-sm">
+                    <p className="text-muted-foreground">{selectedPreset.audio_bed_hint}</p>
                   </div>
-                </div>
-              </div>
-
-              {/* Example Prompt */}
-              <div className="space-y-2">
-                <h3 className="font-semibold">Example Prompt</h3>
-                <div className="bg-slate-900 p-4 rounded-lg text-sm font-mono whitespace-pre-wrap">
-                  {selectedPreset.example_prompt}
                 </div>
               </div>
 
