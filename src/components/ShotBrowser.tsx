@@ -16,21 +16,14 @@ interface ShotBrowserProps {
 
 export function ShotBrowser({ shots, onAddShot }: ShotBrowserProps) {
   const [search, setSearch] = useState('');
-  const [categoryFilter, setCategoryFilter] = useState('all');
-  const [movementFilter, setMovementFilter] = useState('all');
   const [selectedShot, setSelectedShot] = useState<Shot | null>(null);
-
-  const categories = ['all', ...Array.from(new Set(shots.map(s => s.category)))];
-  const movements = ['all', ...Array.from(new Set(shots.map(s => s.movement_type)))];
 
   const filteredShots = shots.filter(shot => {
     const matchesSearch =
-      shot.name.toLowerCase().includes(search.toLowerCase()) ||
-      shot.description.toLowerCase().includes(search.toLowerCase()) ||
-      shot.move.toLowerCase().includes(search.toLowerCase());
-    const matchesCategory = categoryFilter === 'all' || shot.category === categoryFilter;
-    const matchesMovement = movementFilter === 'all' || shot.movement_type === movementFilter;
-    return matchesSearch && matchesCategory && matchesMovement;
+      shot.move.toLowerCase().includes(search.toLowerCase()) ||
+      shot.framing.toLowerCase().includes(search.toLowerCase()) ||
+      shot.purpose.toLowerCase().includes(search.toLowerCase());
+    return matchesSearch;
   });
 
   return (
@@ -43,29 +36,15 @@ export function ShotBrowser({ shots, onAddShot }: ShotBrowserProps) {
         </p>
       </div>
 
-      {/* Filters */}
-      <div className="flex flex-col md:flex-row gap-4">
-        <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-          <Input
-            placeholder="Search shots..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="pl-10"
-          />
-        </div>
-        <Select value={categoryFilter} onChange={(e) => setCategoryFilter(e.target.value)}>
-          <option value="all">All Categories</option>
-          {categories.filter(c => c !== 'all').map(cat => (
-            <option key={cat} value={cat}>{cat}</option>
-          ))}
-        </Select>
-        <Select value={movementFilter} onChange={(e) => setMovementFilter(e.target.value)}>
-          <option value="all">All Movements</option>
-          {movements.filter(m => m !== 'all').map(mov => (
-            <option key={mov} value={mov}>{mov}</option>
-          ))}
-        </Select>
+      {/* Search */}
+      <div className="relative">
+        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+        <Input
+          placeholder="Search shots by move, framing, or purpose..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className="pl-10"
+        />
       </div>
 
       {/* Results Count */}
@@ -82,17 +61,9 @@ export function ShotBrowser({ shots, onAddShot }: ShotBrowserProps) {
             onClick={() => setSelectedShot(shot)}
           >
             <CardHeader>
-              <div className="flex items-start justify-between mb-2">
-                <div className="flex-1">
-                  <CardTitle className="text-lg mb-2">{shot.name}</CardTitle>
-                  <div className="flex flex-wrap gap-2">
-                    <Badge variant="secondary">{shot.category}</Badge>
-                    <Badge variant="outline">{shot.movement_type}</Badge>
-                  </div>
-                </div>
-              </div>
+              <CardTitle className="text-lg mb-2">{shot.move}</CardTitle>
               <CardDescription className="mt-3">
-                {shot.description}
+                {shot.framing}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-3">
@@ -115,7 +86,7 @@ export function ShotBrowser({ shots, onAddShot }: ShotBrowserProps) {
                   <Clock className="w-4 h-4 text-green-400 mt-0.5" />
                   <div>
                     <p className="font-semibold">Duration</p>
-                    <p className="text-muted-foreground">{shot.duration_range}</p>
+                    <p className="text-muted-foreground">{shot.duration}</p>
                   </div>
                 </div>
               </div>
@@ -148,19 +119,15 @@ export function ShotBrowser({ shots, onAddShot }: ShotBrowserProps) {
             <CardHeader>
               <div className="flex items-start justify-between">
                 <div>
-                  <CardTitle className="text-2xl mb-3">{selectedShot.name}</CardTitle>
-                  <div className="flex flex-wrap gap-2">
-                    <Badge variant="secondary">{selectedShot.category}</Badge>
-                    <Badge variant="outline">{selectedShot.movement_type}</Badge>
-                    <Badge>{selectedShot.speed}</Badge>
-                  </div>
+                  <CardTitle className="text-2xl mb-3">{selectedShot.move}</CardTitle>
+                  <Badge>{selectedShot.speed}</Badge>
                 </div>
                 <Button variant="ghost" size="sm" onClick={() => setSelectedShot(null)}>
                   ✕
                 </Button>
               </div>
               <CardDescription className="text-base mt-3">
-                {selectedShot.description}
+                {selectedShot.framing}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
@@ -185,15 +152,10 @@ export function ShotBrowser({ shots, onAddShot }: ShotBrowserProps) {
                   </h3>
                   <div className="space-y-1 text-sm">
                     <p><span className="text-muted-foreground">Purpose:</span> {selectedShot.purpose}</p>
-                    <p><span className="text-muted-foreground">Duration:</span> {selectedShot.duration_range}</p>
+                    <p><span className="text-muted-foreground">Duration:</span> {selectedShot.duration}</p>
+                    <p><span className="text-muted-foreground">When to Use:</span> {selectedShot.when_to_use}</p>
                   </div>
                 </div>
-              </div>
-
-              {/* When to Use */}
-              <div className="space-y-2">
-                <h3 className="font-semibold">When to Use</h3>
-                <p className="text-sm text-muted-foreground">{selectedShot.when_to_use}</p>
               </div>
 
               {/* Prompt Snippet */}
@@ -204,12 +166,10 @@ export function ShotBrowser({ shots, onAddShot }: ShotBrowserProps) {
                 </div>
               </div>
 
-              {/* Example */}
+              {/* Notes */}
               <div className="space-y-2">
-                <h3 className="font-semibold">Example</h3>
-                <div className="bg-slate-900 p-4 rounded-lg text-sm font-mono whitespace-pre-wrap">
-                  {selectedShot.example}
-                </div>
+                <h3 className="font-semibold">Notes</h3>
+                <p className="text-sm text-muted-foreground">{selectedShot.notes}</p>
               </div>
 
               <div className="flex gap-3">
