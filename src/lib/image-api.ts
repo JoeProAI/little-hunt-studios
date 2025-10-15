@@ -33,6 +33,10 @@ export async function generateImage(params: ImageGenerationParams): Promise<Imag
       style: params.style || 'vivid',
     } as any);
 
+    if (!response.data || response.data.length === 0) {
+      throw new Error('No image data received from API');
+    }
+
     const image = response.data[0];
     
     return {
