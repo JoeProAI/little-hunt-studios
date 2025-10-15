@@ -26,7 +26,7 @@ interface VideoGenerationInterfaceProps {
 export function VideoGenerationInterface({ triggerGeneration, onGenerationStart }: VideoGenerationInterfaceProps) {
   const [generations, setGenerations] = useState<GenerationStatus[]>([]);
   const [isGenerating, setIsGenerating] = useState(false);
-  const [apiProvider, setApiProvider] = useState<'openai' | 'replicate'>('replicate');
+  const [apiProvider, setApiProvider] = useState<'openai' | 'replicate'>('openai');
 
   const generateVideo = async (prompt: string, duration: string = '5s') => {
     onGenerationStart?.();
@@ -56,43 +56,93 @@ export function VideoGenerationInterface({ triggerGeneration, onGenerationStart 
 
       const data = await response.json();
       
-      // Simulate progress updates
-      const generationId = newGeneration.id;
-      let progress = 0;
-      
-      const progressInterval = setInterval(() => {
-        progress += 10;
+      // If using Replicate, poll for actual video completion
+      if (apiProvider === 'replicate' && data.id) {
+        const generationId = newGeneration.id;
+        const predictionId = data.id;
         
-        setGenerations(prev =>
-          prev.map(gen =>
-            gen.id === generationId
-              ? { ...gen, status: 'processing', progress: Math.min(progress, 90) }
-              : gen
-          )
-        );
-
-        if (progress >= 100) {
-          clearInterval(progressInterval);
-          
-          // Simulate completion
-          setTimeout(() => {
+        // Poll for status every 3 seconds
+        const pollInterval = setInterval(async () => {
+          try {
+            const statusResponse = await fetch(`/api/replicate/status/${predictionId}`);
+            const statusData = await statusResponse.json();
+            
+            // Update progress based on status
+            let progress = 0;
+            if (statusData.status === 'starting') progress = 20;
+            if (statusData.status === 'processing') progress = 60;
+            if (statusData.status === 'succeeded') progress = 100;
+            
             setGenerations(prev =>
               prev.map(gen =>
                 gen.id === generationId
-                  ? {
-                      ...gen,
-                      status: 'completed',
-                      progress: 100,
-                      videoUrl: data.video_url || '#',
-                      thumbnailUrl: data.thumbnail_url,
+                  ? { 
+                      ...gen, 
+                      status: statusData.status === 'succeeded' ? 'completed' : 'processing',
+                      progress,
+                      videoUrl: statusData.video_url,
+                      error: statusData.error,
                     }
                   : gen
               )
             );
-            setIsGenerating(false);
-          }, 2000);
-        }
-      }, 1000);
+            
+            // Stop polling when done
+            if (statusData.status === 'succeeded' || statusData.status === 'failed') {
+              clearInterval(pollInterval);
+              setIsGenerating(false);
+            }
+          } catch (error) {
+            console.error('Polling error:', error);
+          }
+        }, 3000);
+        
+        // Set initial processing state
+        setGenerations(prev =>
+          prev.map(gen =>
+            gen.id === generationId
+              ? { ...gen, status: 'processing', progress: 10 }
+              : gen
+          )
+        );
+      } else {
+        // For OpenAI, simulate progress (since we don't have real polling yet)
+        const generationId = newGeneration.id;
+        let progress = 0;
+        
+        const progressInterval = setInterval(() => {
+          progress += 10;
+          
+          setGenerations(prev =>
+            prev.map(gen =>
+              gen.id === generationId
+                ? { ...gen, status: 'processing', progress: Math.min(progress, 90) }
+                : gen
+            )
+          );
+
+          if (progress >= 100) {
+            clearInterval(progressInterval);
+            
+            setTimeout(() => {
+              setGenerations(prev =>
+                prev.map(gen =>
+                  gen.id === generationId
+                    ? {
+                        ...gen,
+                        status: 'completed',
+                        progress: 100,
+                        videoUrl: data.video_url || '#',
+                        thumbnailUrl: data.thumbnail_url,
+                      }
+                    : gen
+                )
+              );
+              setIsGenerating(false);
+            }, 2000);
+          }
+        }, 1000);
+      }
     } catch (error) {
       setGenerations(prev =>
         prev.map(gen =>
@@ -149,15 +199,15 @@ export function VideoGenerationInterface({ triggerGeneration, onGenerationStart 
               onChange={(e) => setApiProvider(e.target.value as 'openai' | 'replicate')}
               className="px-3 py-1 rounded-md bg-slate-800 border border-slate-700 text-sm"
             >
+              <option value="openai">OpenAI (Sora 2 / 2.2 - Highest Quality)</option>
               <option value="replicate">Replicate (MiniMax, Hunyuan)</option>
-              <option value="openai">OpenAI (Sora 2)</option>
             </select>
           </div>
         </div>
         <p className="text-muted-foreground">
           {apiProvider === 'replicate' 
             ? 'Using Replicate API - Access to MiniMax Video-01, Hunyuan Video, and more'
-            : 'Using OpenAI Sora 2 API - Premium video generation'}
+            : 'Using OpenAI Sora 2/2.2 API - Highest quality video generation'}
         </p>
       </div>
 
