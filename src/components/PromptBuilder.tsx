@@ -11,7 +11,7 @@ import { Label } from '@/components/ui/label';
 import { Select } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Sparkles, Copy, Check } from 'lucide-react';
+import { Sparkles, Copy, Check, Wand2 } from 'lucide-react';
 
 interface PromptBuilderProps {
   onPromptGenerate: (prompt: string, duration: string) => void;
@@ -20,11 +20,14 @@ interface PromptBuilderProps {
 export function PromptBuilder({ onPromptGenerate }: PromptBuilderProps) {
   const [generatedPrompt, setGeneratedPrompt] = useState('');
   const [copied, setCopied] = useState(false);
+  const [pasteText, setPasteText] = useState('');
+  const [showPasteArea, setShowPasteArea] = useState(false);
 
   const {
     register,
     handleSubmit,
     watch,
+    setValue,
     formState: { errors },
   } = useForm<PromptBuilderData>({
     resolver: zodResolver(PromptBuilderSchema),
@@ -34,6 +37,84 @@ export function PromptBuilder({ onPromptGenerate }: PromptBuilderProps) {
   });
 
   const formValues = watch();
+
+  const parseSmartPaste = (text: string) => {
+    const lower = text.toLowerCase();
+    
+    // Extract scene (look for location/setting words)
+    const sceneKeywords = ['in a', 'at a', 'inside', 'outside', 'on a', 'through a', 'forest', 'city', 'room', 'beach', 'mountain', 'space', 'street'];
+    const sceneMatch = text.match(/(?:in|at|inside|outside|on|through)\s+(?:a\s+)?([^,\.]+)/i);
+    if (sceneMatch) {
+      setValue('scene', sceneMatch[0].trim());
+    }
+    
+    // Extract subject (look for main noun/character)
+    const subjectKeywords = ['person', 'man', 'woman', 'child', 'character', 'figure', 'animal', 'car', 'robot', 'creature'];
+    let subject = '';
+    for (const keyword of subjectKeywords) {
+      if (lower.includes(keyword)) {
+        const match = text.match(new RegExp(`(a|an|the)?\\s*([\\w\\s]+${keyword}[\\w\\s]*)`, 'i'));
+        if (match) {
+          subject = match[0].trim();
+          break;
+        }
+      }
+    }
+    // Fallback: take first noun phrase
+    if (!subject) {
+      const firstSentence = text.split(/[,\.]/)[0];
+      const words = firstSentence.split(' ');
+      if (words.length > 2) {
+        subject = words.slice(0, 3).join(' ');
+      }
+    }
+    if (subject) setValue('subject', subject);
+    
+    // Extract action (look for verbs)
+    const actionWords = ['walking', 'running', 'flying', 'standing', 'sitting', 'moving', 'dancing', 'jumping', 'driving', 'floating', 'spinning'];
+    for (const action of actionWords) {
+      if (lower.includes(action)) {
+        const match = text.match(new RegExp(`(${action}[\\w\\s,]+)`, 'i'));
+        if (match) {
+          setValue('action', match[1].split(/[,\.]/)[0].trim());
+          break;
+        }
+      }
+    }
+    
+    // Extract camera (look for camera-related words)
+    const cameraKeywords = ['dolly', 'pan', 'tilt', 'zoom', 'tracking', 'aerial', 'close-up', 'wide shot', 'drone', 'steadicam', 'handheld'];
+    for (const cam of cameraKeywords) {
+      if (lower.includes(cam)) {
+        setValue('camera', cam + ' shot');
+        break;
+      }
+    }
+    
+    // Extract look/style (look for visual descriptors)
+    const styleKeywords = ['cinematic', 'dramatic', 'moody', 'bright', 'dark', 'colorful', 'black and white', 'vintage', 'modern', 'film noir', 'neon'];
+    for (const style of styleKeywords) {
+      if (lower.includes(style)) {
+        setValue('look', style + ' lighting and color grading');
+        break;
+      }
+    }
+    
+    // Extract audio hints
+    const audioKeywords = ['music', 'sound', 'ambient', 'quiet', 'loud', 'silent', 'soundtrack'];
+    for (const audio of audioKeywords) {
+      if (lower.includes(audio)) {
+        const match = text.match(new RegExp(`(${audio}[\\w\\s]+)`, 'i'));
+        if (match) {
+          setValue('audio', match[1].split(/[,\.]/)[0].trim());
+          break;
+        }
+      }
+    }
+    
+    setPasteText('');
+    setShowPasteArea(false);
+  };
 
   const generatePrompt = (data: PromptBuilderData) => {
     const parts = [];
@@ -91,6 +172,47 @@ export function PromptBuilder({ onPromptGenerate }: PromptBuilderProps) {
           </CardDescription>
         </CardHeader>
         <CardContent>
+          {/* Smart Paste Area */}
+          {!showPasteArea ? (
+            <Button
+              type="button"
+              variant="outline"
+              className="w-full mb-4 border-dashed border-2 border-purple-500/30 hover:border-purple-500/60"
+              onClick={() => setShowPasteArea(true)}
+            >
+              <Wand2 className="w-4 h-4 mr-2" />
+              Smart Paste - Paste a paragraph to auto-fill fields
+            </Button>
+          ) : (
+            <div className="mb-4 space-y-2">
+              <Label>Paste Your Description</Label>
+              <Textarea
+                placeholder="Paste a paragraph describing your video here, and I'll automatically fill in the fields below...\n\nExample: A cinematic aerial shot of a lone figure walking through a misty forest at dawn, with golden sunlight filtering through the trees and dramatic atmospheric fog."
+                value={pasteText}
+                onChange={(e) => setPasteText(e.target.value)}
+                className="min-h-[120px] border-purple-500/30"
+              />
+              <div className="flex gap-2">
+                <Button
+                  type="button"
+                  onClick={() => parseSmartPaste(pasteText)}
+                  disabled={!pasteText.trim()}
+                  className="flex-1"
+                >
+                  <Wand2 className="w-4 h-4 mr-2" />
+                  Parse & Fill Fields
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => { setPasteText(''); setShowPasteArea(false); }}
+                >
+                  Cancel
+                </Button>
+              </div>
+            </div>
+          )}
+
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             {/* Scene */}
             <div className="space-y-2">
