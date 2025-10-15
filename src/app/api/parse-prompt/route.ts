@@ -30,18 +30,26 @@ export async function POST(request: NextRequest) {
 - action: What the subject is DOING (e.g., "walking slowly", "playing instruments", "flickering")
 - camera: The CAMERA MOVEMENT/ANGLE (e.g., "low angle orbit shot", "aerial drone view", "dolly in")
 - look: VISUAL STYLE/LIGHTING (e.g., "cinematic lighting", "candle light", "golden hour", "dramatic color grading")
-- audio: SOUND/MUSIC descriptions (e.g., "ambient music", "jazz instruments", "quiet atmosphere")
+- audio: SOUND/MUSIC/AUDIO descriptions - BE AGGRESSIVE about finding ANY audio-related content. Include:
+  * Musical instruments being played (e.g., "saxophone music", "piano playing", "guitar strumming")
+  * Background music mentions (e.g., "jazz music", "ambient soundtrack", "electronic beats")
+  * Sound effects (e.g., "wind blowing", "water flowing", "footsteps")
+  * Atmospheric sounds (e.g., "quiet atmosphere", "bustling city sounds")
+  * ANY mention of "music", "sound", "audio", "quiet", "loud", "silent"
+  * If someone is playing an instrument, that's AUDIO (e.g., "playing guitar" → audio: "guitar music")
+- negatives: Things to AVOID in the generation (e.g., "no blur", "avoid grainy look", "no people in background")
 
 Rules:
 1. Keep each field SHORT and SPECIFIC
 2. Subject should be JUST the subject (e.g., "a musician" not "a musician playing guitar")
 3. Put the action in the ACTION field (e.g., "playing guitar")
-4. If something relates to sound/music, put it in AUDIO
-5. Only fill fields that have clear information
-6. Return valid JSON only
+4. BE VERY LIBERAL with AUDIO - if anything suggests sound/music, extract it
+5. Look for negative instructions like "no", "avoid", "without", "don't"
+6. Only fill fields that have clear information
+7. Return valid JSON only
 
 Return ONLY a JSON object like:
-{"scene": "...", "subject": "...", "action": "...", "camera": "...", "look": "...", "audio": "..."}
+{"scene": "...", "subject": "...", "action": "...", "camera": "...", "look": "...", "audio": "...", "negatives": "..."}
 
 If a field has no information, set it to empty string "".`
         },

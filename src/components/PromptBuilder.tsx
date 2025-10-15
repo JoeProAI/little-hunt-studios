@@ -61,6 +61,7 @@ export function PromptBuilder({ onPromptGenerate }: PromptBuilderProps) {
       if (fields.camera) setValue('camera', fields.camera);
       if (fields.look) setValue('look', fields.look);
       if (fields.audio) setValue('audio', fields.audio);
+      if (fields.negatives) setValue('negatives', fields.negatives);
 
       setPasteText('');
       setShowPasteArea(false);
