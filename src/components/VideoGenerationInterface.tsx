@@ -26,7 +26,7 @@ interface VideoGenerationInterfaceProps {
 export function VideoGenerationInterface({ triggerGeneration, onGenerationStart }: VideoGenerationInterfaceProps) {
   const [generations, setGenerations] = useState<GenerationStatus[]>([]);
   const [isGenerating, setIsGenerating] = useState(false);
-  const [apiProvider, setApiProvider] = useState<'openai' | 'replicate'>('openai');
+  const [apiProvider, setApiProvider] = useState<'openai' | 'replicate'>('replicate');
 
   const generateVideo = async (prompt: string, duration: string = '5s') => {
     onGenerationStart?.();
@@ -199,15 +199,15 @@ export function VideoGenerationInterface({ triggerGeneration, onGenerationStart 
               onChange={(e) => setApiProvider(e.target.value as 'openai' | 'replicate')}
               className="px-3 py-1 rounded-md bg-slate-800 border border-slate-700 text-sm"
             >
-              <option value="openai">OpenAI (Sora 2 / 2.2 - Highest Quality)</option>
-              <option value="replicate">Replicate (MiniMax, Hunyuan)</option>
+              <option value="replicate">Replicate (MiniMax, Hunyuan - Working!)</option>
+              <option value="openai" disabled>OpenAI Sora 2 (Not Yet Available)</option>
             </select>
           </div>
         </div>
         <p className="text-muted-foreground">
           {apiProvider === 'replicate' 
-            ? 'Using Replicate API - Access to MiniMax Video-01, Hunyuan Video, and more'
-            : 'Using OpenAI Sora 2/2.2 API - Highest quality video generation'}
+            ? '✅ Using Replicate API - MiniMax Video-01, Hunyuan Video (Working & Fast!)'
+            : '⚠️ OpenAI Sora 2 API is not yet widely available. Use Replicate instead.'}
         </p>
       </div>
 
