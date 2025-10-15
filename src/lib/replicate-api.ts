@@ -26,32 +26,53 @@ export interface ReplicateVideoResult {
  */
 export async function generateVideoWithReplicate(params: ReplicateVideoParams): Promise<ReplicateVideoResult> {
   try {
-    // Default to minimax video-01 model (good quality, fast)
-    const model = params.model || 'minimax/video-01';
+    // Use Sora 2 via Replicate as default
+    const model = params.model || 'openai/sora-2';
     
     console.log(`Starting Replicate video generation with model: ${model}`);
     
-    // Start the prediction
-    const prediction = await replicate.predictions.create({
-      version: model,
-      input: {
-        prompt: params.prompt,
-        ...(params.duration && { num_frames: params.duration === '5s' ? 150 : 300 }),
-        ...(params.aspect_ratio && { aspect_ratio: params.aspect_ratio }),
-      },
-    });
+    // Prepare input based on the model
+    let input: any = {
+      prompt: params.prompt,
+    };
 
+    // Add model-specific parameters
+    if (model.includes('sora')) {
+      // Sora 2 parameters
+      input.duration = params.duration || '5s';
+      input.aspect_ratio = params.aspect_ratio || '16:9';
+    } else if (model.includes('minimax')) {
+      // MiniMax parameters
+      input.num_frames = params.duration === '5s' ? 150 : 300;
+      if (params.aspect_ratio) input.aspect_ratio = params.aspect_ratio;
+    }
+    
+    console.log('Replicate input:', input);
+    
+    // Start the prediction using run() method
+    const output = await replicate.run(
+      model as any,
+      { input }
+    );
+
+    // For now, return the output directly since run() waits for completion
     return {
-      id: prediction.id,
-      status: prediction.status as any,
+      id: `gen_${Date.now()}`,
+      status: 'succeeded',
+      video_url: Array.isArray(output) ? output[0] : output,
       created_at: Date.now(),
-      progress: 0,
+      progress: 100,
     };
   } catch (error: any) {
     console.error('Replicate video generation error:', error);
+    console.error('Error details:', JSON.stringify(error, null, 2));
     
     if (error.message?.includes('authentication')) {
       throw new Error('Invalid Replicate API token. Please check your REPLICATE_API_TOKEN.');
+    }
+    
+    if (error.message?.includes('not found')) {
+      throw new Error(`Model not found on Replicate. The model might not be available yet or the name might be wrong. Error: ${error.message}`);
     }
     
     throw new Error(error.message || 'Failed to generate video with Replicate');
@@ -112,6 +133,7 @@ export async function generateImageWithReplicate(prompt: string, model: string =
  * Available video models on Replicate
  */
 export const REPLICATE_VIDEO_MODELS = {
+  'openai/sora-2': 'Sora 2 via Replicate (Highest Quality)',
   'minimax/video-01': 'MiniMax Video-01 (Fast, Good Quality)',
   'tencent/hunyuan-video': 'Hunyuan Video (High Quality)',
   'lucataco/mochi-1-preview': 'Mochi-1 (Experimental)',

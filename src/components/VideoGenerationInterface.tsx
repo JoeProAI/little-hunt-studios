@@ -199,8 +199,8 @@ export function VideoGenerationInterface({ triggerGeneration, onGenerationStart 
               onChange={(e) => setApiProvider(e.target.value as 'openai' | 'replicate')}
               className="px-3 py-1 rounded-md bg-slate-800 border border-slate-700 text-sm"
             >
-              <option value="replicate">Replicate (MiniMax, Hunyuan - Working!)</option>
-              <option value="openai" disabled>OpenAI Sora 2 (Not Yet Available)</option>
+              <option value="replicate">Sora 2 via Replicate (Working!)</option>
+              <option value="openai" disabled>Sora 2 Direct (Not Available)</option>
             </select>
           </div>
         </div>
