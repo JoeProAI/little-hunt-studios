@@ -41,37 +41,85 @@ export function PromptBuilder({ onPromptGenerate }: PromptBuilderProps) {
   const parseSmartPaste = (text: string) => {
     const lower = text.toLowerCase();
     
-    // Extract scene (look for location/setting words)
-    const sceneKeywords = ['in a', 'at a', 'inside', 'outside', 'on a', 'through a', 'forest', 'city', 'room', 'beach', 'mountain', 'space', 'street'];
-    const sceneMatch = text.match(/(?:in|at|inside|outside|on|through)\s+(?:a\s+)?([^,\.]+)/i);
-    if (sceneMatch) {
-      setValue('scene', sceneMatch[0].trim());
+    // Extract camera FIRST (most specific) - look for shot types and angles
+    const cameraPatterns = [
+      /(?:low|high|dutch|bird's eye|worm's eye)?\s*(?:angle)?\s*(?:dolly|pan|tilt|zoom|tracking|aerial|orbit|rotating|circling|crane|steadicam|handheld|drone|push\s+in|pull\s+out)\s*(?:shot|move|movement)?/gi,
+      /(?:close-up|wide shot|medium shot|extreme close-up|establishing shot|over the shoulder|pov|point of view)/gi,
+    ];
+    
+    for (const pattern of cameraPatterns) {
+      const matches = text.match(pattern);
+      if (matches && matches.length > 0) {
+        setValue('camera', matches[0].trim());
+        // Remove from text so it doesn't interfere with other parsing
+        text = text.replace(matches[0], '');
+        break;
+      }
     }
     
-    // Extract subject (look for main noun/character)
-    const subjectKeywords = ['person', 'man', 'woman', 'child', 'character', 'figure', 'animal', 'car', 'robot', 'creature'];
-    let subject = '';
-    for (const keyword of subjectKeywords) {
-      if (lower.includes(keyword)) {
-        const match = text.match(new RegExp(`(a|an|the)?\\s*([\\w\\s]+${keyword}[\\w\\s]*)`, 'i'));
-        if (match) {
-          subject = match[0].trim();
+    // Extract scene (look for location/setting words) - broader patterns
+    const scenePattern = /(?:inside|in|at|on|through|within|outside|outside of)\s+(?:a|an|the)?\s*([^,\.\n]+?)(?:\s+with|\s+and|$)/i;
+    const sceneMatch = text.match(scenePattern);
+    if (sceneMatch) {
+      setValue('scene', sceneMatch[0].replace(/\s+with.*$/, '').trim());
+    }
+    
+    // Extract look/style - check for lighting words
+    const lightingPatterns = [
+      /(?:candle|fire|torch|neon|natural|soft|hard|dramatic|rim|back|key)\s*(?:light|lighting|lit)/gi,
+      /(?:cinematic|dramatic|moody|bright|dark|colorful|black and white|vintage|modern|film noir|neon|golden hour|blue hour)/gi,
+    ];
+    
+    for (const pattern of lightingPatterns) {
+      const matches = text.match(pattern);
+      if (matches && matches.length > 0) {
+        setValue('look', matches.join(', '));
+        break;
+      }
+    }
+    
+    // Extract subject (if not already set by scene)
+    // Look for the first noun phrase that's not part of scene/camera
+    const words = text.split(/\s+/);
+    const commonSubjects = ['person', 'man', 'woman', 'child', 'character', 'figure', 'animal', 'car', 'robot', 'creature', 'object', 'product', 'bottle', 'phone', 'camera'];
+    
+    let subjectFound = false;
+    for (let i = 0; i < words.length - 1; i++) {
+      const word = words[i].toLowerCase();
+      if (['a', 'an', 'the'].includes(word)) {
+        // Take next 2-4 words as subject
+        const potentialSubject = words.slice(i, Math.min(i + 5, words.length)).join(' ');
+        const cleaned = potentialSubject.replace(/[,\.\n].*/,'').trim();
+        if (cleaned.length > 5 && !cleaned.includes('shot') && !cleaned.includes('angle')) {
+          setValue('subject', cleaned);
+          subjectFound = true;
           break;
         }
       }
+      
+      // Check for common subject words
+      for (const subj of commonSubjects) {
+        if (word.includes(subj)) {
+          const potentialSubject = words.slice(Math.max(0, i - 2), Math.min(i + 3, words.length)).join(' ');
+          const cleaned = potentialSubject.replace(/[,\.\n].*/,'').trim();
+          setValue('subject', cleaned);
+          subjectFound = true;
+          break;
+        }
+      }
+      if (subjectFound) break;
     }
-    // Fallback: take first noun phrase
-    if (!subject) {
-      const firstSentence = text.split(/[,\.]/)[0];
-      const words = firstSentence.split(' ');
-      if (words.length > 2) {
-        subject = words.slice(0, 3).join(' ');
+    
+    // If still no subject, use first meaningful phrase
+    if (!subjectFound) {
+      const firstPhrase = text.split(/[,\.\n]/)[0];
+      if (firstPhrase.length > 10 && firstPhrase.length < 100) {
+        setValue('subject', firstPhrase.trim());
       }
     }
-    if (subject) setValue('subject', subject);
     
     // Extract action (look for verbs)
-    const actionWords = ['walking', 'running', 'flying', 'standing', 'sitting', 'moving', 'dancing', 'jumping', 'driving', 'floating', 'spinning'];
+    const actionWords = ['walking', 'running', 'flying', 'standing', 'sitting', 'moving', 'dancing', 'jumping', 'driving', 'floating', 'spinning', 'rotating', 'turning', 'climbing', 'falling', 'rising'];
     for (const action of actionWords) {
       if (lower.includes(action)) {
         const match = text.match(new RegExp(`(${action}[\\w\\s,]+)`, 'i'));
@@ -82,26 +130,8 @@ export function PromptBuilder({ onPromptGenerate }: PromptBuilderProps) {
       }
     }
     
-    // Extract camera (look for camera-related words)
-    const cameraKeywords = ['dolly', 'pan', 'tilt', 'zoom', 'tracking', 'aerial', 'close-up', 'wide shot', 'drone', 'steadicam', 'handheld'];
-    for (const cam of cameraKeywords) {
-      if (lower.includes(cam)) {
-        setValue('camera', cam + ' shot');
-        break;
-      }
-    }
-    
-    // Extract look/style (look for visual descriptors)
-    const styleKeywords = ['cinematic', 'dramatic', 'moody', 'bright', 'dark', 'colorful', 'black and white', 'vintage', 'modern', 'film noir', 'neon'];
-    for (const style of styleKeywords) {
-      if (lower.includes(style)) {
-        setValue('look', style + ' lighting and color grading');
-        break;
-      }
-    }
-    
     // Extract audio hints
-    const audioKeywords = ['music', 'sound', 'ambient', 'quiet', 'loud', 'silent', 'soundtrack'];
+    const audioKeywords = ['music', 'sound', 'ambient', 'quiet', 'loud', 'silent', 'soundtrack', 'audio', 'sfx'];
     for (const audio of audioKeywords) {
       if (lower.includes(audio)) {
         const match = text.match(new RegExp(`(${audio}[\\w\\s]+)`, 'i'));
