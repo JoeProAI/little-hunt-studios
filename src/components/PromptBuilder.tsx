@@ -38,112 +38,36 @@ export function PromptBuilder({ onPromptGenerate }: PromptBuilderProps) {
 
   const formValues = watch();
 
-  const parseSmartPaste = (text: string) => {
-    const lower = text.toLowerCase();
-    
-    // Extract camera FIRST (most specific) - look for shot types and angles
-    const cameraPatterns = [
-      /(?:low|high|dutch|bird's eye|worm's eye)?\s*(?:angle)?\s*(?:dolly|pan|tilt|zoom|tracking|aerial|orbit|rotating|circling|crane|steadicam|handheld|drone|push\s+in|pull\s+out)\s*(?:shot|move|movement)?/gi,
-      /(?:close-up|wide shot|medium shot|extreme close-up|establishing shot|over the shoulder|pov|point of view)/gi,
-    ];
-    
-    for (const pattern of cameraPatterns) {
-      const matches = text.match(pattern);
-      if (matches && matches.length > 0) {
-        setValue('camera', matches[0].trim());
-        // Remove from text so it doesn't interfere with other parsing
-        text = text.replace(matches[0], '');
-        break;
+  const parseSmartPaste = async (text: string) => {
+    try {
+      // Call AI-powered parsing API
+      const response = await fetch('/api/parse-prompt', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to parse');
       }
+
+      const data = await response.json();
+      const fields = data.fields;
+
+      // Fill in all the fields from AI response
+      if (fields.scene) setValue('scene', fields.scene);
+      if (fields.subject) setValue('subject', fields.subject);
+      if (fields.action) setValue('action', fields.action);
+      if (fields.camera) setValue('camera', fields.camera);
+      if (fields.look) setValue('look', fields.look);
+      if (fields.audio) setValue('audio', fields.audio);
+
+      setPasteText('');
+      setShowPasteArea(false);
+    } catch (error) {
+      console.error('Smart paste error:', error);
+      alert('Failed to parse text. Please try again or fill fields manually.');
     }
-    
-    // Extract scene (look for location/setting words) - broader patterns
-    const scenePattern = /(?:inside|in|at|on|through|within|outside|outside of)\s+(?:a|an|the)?\s*([^,\.\n]+?)(?:\s+with|\s+and|$)/i;
-    const sceneMatch = text.match(scenePattern);
-    if (sceneMatch) {
-      setValue('scene', sceneMatch[0].replace(/\s+with.*$/, '').trim());
-    }
-    
-    // Extract look/style - check for lighting words
-    const lightingPatterns = [
-      /(?:candle|fire|torch|neon|natural|soft|hard|dramatic|rim|back|key)\s*(?:light|lighting|lit)/gi,
-      /(?:cinematic|dramatic|moody|bright|dark|colorful|black and white|vintage|modern|film noir|neon|golden hour|blue hour)/gi,
-    ];
-    
-    for (const pattern of lightingPatterns) {
-      const matches = text.match(pattern);
-      if (matches && matches.length > 0) {
-        setValue('look', matches.join(', '));
-        break;
-      }
-    }
-    
-    // Extract subject (if not already set by scene)
-    // Look for the first noun phrase that's not part of scene/camera
-    const words = text.split(/\s+/);
-    const commonSubjects = ['person', 'man', 'woman', 'child', 'character', 'figure', 'animal', 'car', 'robot', 'creature', 'object', 'product', 'bottle', 'phone', 'camera'];
-    
-    let subjectFound = false;
-    for (let i = 0; i < words.length - 1; i++) {
-      const word = words[i].toLowerCase();
-      if (['a', 'an', 'the'].includes(word)) {
-        // Take next 2-4 words as subject
-        const potentialSubject = words.slice(i, Math.min(i + 5, words.length)).join(' ');
-        const cleaned = potentialSubject.replace(/[,\.\n].*/,'').trim();
-        if (cleaned.length > 5 && !cleaned.includes('shot') && !cleaned.includes('angle')) {
-          setValue('subject', cleaned);
-          subjectFound = true;
-          break;
-        }
-      }
-      
-      // Check for common subject words
-      for (const subj of commonSubjects) {
-        if (word.includes(subj)) {
-          const potentialSubject = words.slice(Math.max(0, i - 2), Math.min(i + 3, words.length)).join(' ');
-          const cleaned = potentialSubject.replace(/[,\.\n].*/,'').trim();
-          setValue('subject', cleaned);
-          subjectFound = true;
-          break;
-        }
-      }
-      if (subjectFound) break;
-    }
-    
-    // If still no subject, use first meaningful phrase
-    if (!subjectFound) {
-      const firstPhrase = text.split(/[,\.\n]/)[0];
-      if (firstPhrase.length > 10 && firstPhrase.length < 100) {
-        setValue('subject', firstPhrase.trim());
-      }
-    }
-    
-    // Extract action (look for verbs)
-    const actionWords = ['walking', 'running', 'flying', 'standing', 'sitting', 'moving', 'dancing', 'jumping', 'driving', 'floating', 'spinning', 'rotating', 'turning', 'climbing', 'falling', 'rising'];
-    for (const action of actionWords) {
-      if (lower.includes(action)) {
-        const match = text.match(new RegExp(`(${action}[\\w\\s,]+)`, 'i'));
-        if (match) {
-          setValue('action', match[1].split(/[,\.]/)[0].trim());
-          break;
-        }
-      }
-    }
-    
-    // Extract audio hints
-    const audioKeywords = ['music', 'sound', 'ambient', 'quiet', 'loud', 'silent', 'soundtrack', 'audio', 'sfx'];
-    for (const audio of audioKeywords) {
-      if (lower.includes(audio)) {
-        const match = text.match(new RegExp(`(${audio}[\\w\\s]+)`, 'i'));
-        if (match) {
-          setValue('audio', match[1].split(/[,\.]/)[0].trim());
-          break;
-        }
-      }
-    }
-    
-    setPasteText('');
-    setShowPasteArea(false);
   };
 
   const generatePrompt = (data: PromptBuilderData) => {
@@ -230,7 +154,7 @@ export function PromptBuilder({ onPromptGenerate }: PromptBuilderProps) {
                   className="flex-1"
                 >
                   <Wand2 className="w-4 h-4 mr-2" />
-                  Parse & Fill Fields
+                  AI Parse & Fill Fields
                 </Button>
                 <Button
                   type="button"
