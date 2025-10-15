@@ -18,10 +18,12 @@ type Tab = 'builder' | 'presets' | 'shots' | 'generate';
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState<Tab>('builder');
+  const [generationTrigger, setGenerationTrigger] = useState<{ prompt: string; duration: string } | null>(null);
 
   const handlePromptGenerate = (prompt: string, duration: string) => {
     console.log('Generating video:', { prompt, duration });
-    // TODO: Implement actual video generation
+    // Trigger video generation
+    setGenerationTrigger({ prompt, duration });
     setActiveTab('generate');
   };
 
@@ -116,7 +118,12 @@ export default function Home() {
             onAddShot={handleAddShot}
           />
         )}
-        {activeTab === 'generate' && <VideoGenerationInterface />}
+        {activeTab === 'generate' && (
+          <VideoGenerationInterface 
+            triggerGeneration={generationTrigger}
+            onGenerationStart={() => setGenerationTrigger(null)}
+          />
+        )}
       </main>
 
       {/* Footer */}

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
@@ -18,11 +18,17 @@ interface GenerationStatus {
   createdAt: number;
 }
 
-export function VideoGenerationInterface() {
+interface VideoGenerationInterfaceProps {
+  triggerGeneration?: { prompt: string; duration: string } | null;
+  onGenerationStart?: () => void;
+}
+
+export function VideoGenerationInterface({ triggerGeneration, onGenerationStart }: VideoGenerationInterfaceProps) {
   const [generations, setGenerations] = useState<GenerationStatus[]>([]);
   const [isGenerating, setIsGenerating] = useState(false);
 
-  const generateVideo = async (prompt: string, duration: string) => {
+  const generateVideo = async (prompt: string, duration: string = '5s') => {
+    onGenerationStart?.();
     setIsGenerating(true);
     
     const newGeneration: GenerationStatus = {
@@ -119,6 +125,13 @@ export function VideoGenerationInterface() {
         return 'Failed';
     }
   };
+
+  // Auto-trigger when triggerGeneration prop changes
+  useEffect(() => {
+    if (triggerGeneration) {
+      generateVideo(triggerGeneration.prompt, triggerGeneration.duration);
+    }
+  }, [triggerGeneration]);
 
   return (
     <div className="space-y-6">
