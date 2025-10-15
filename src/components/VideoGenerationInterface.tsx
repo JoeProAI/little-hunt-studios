@@ -206,8 +206,8 @@ export function VideoGenerationInterface({ triggerGeneration, onGenerationStart 
         </div>
         <p className="text-muted-foreground">
           {apiProvider === 'replicate' 
-            ? '✅ Using Replicate API - MiniMax Video-01, Hunyuan Video (Working & Fast!)'
-            : '⚠️ OpenAI Sora 2 API is not yet widely available. Use Replicate instead.'}
+            ? '✅ Using Sora 2 via Replicate - Highest quality video generation!'
+            : '⚠️ OpenAI Sora 2 Direct API is not available. Use Replicate instead.'}
         </p>
       </div>
 
