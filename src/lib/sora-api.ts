@@ -49,8 +49,20 @@ export async function generateVideo(params: SoraGenerationParams): Promise<SoraG
       created_at: Date.now(),
       progress: 0,
     };
-  } catch (error) {
+  } catch (error: any) {
     console.error('Sora video generation error:', error);
+    
+    // Handle specific OpenAI errors
+    if (error.status === 503) {
+      throw new Error('Sora 2 is currently at capacity. Please try again in a few moments.');
+    } else if (error.status === 404) {
+      throw new Error('Sora 2 model not found. The API might not be available yet.');
+    } else if (error.status === 401) {
+      throw new Error('Invalid API key. Please check your OpenAI API key.');
+    } else if (error.message) {
+      throw new Error(error.message);
+    }
+    
     throw error;
   }
 }

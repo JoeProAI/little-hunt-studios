@@ -45,8 +45,20 @@ export async function generateImage(params: ImageGenerationParams): Promise<Imag
       revised_prompt: image.revised_prompt,
       created_at: Date.now(),
     };
-  } catch (error) {
+  } catch (error: any) {
     console.error('Image generation error:', error);
+    
+    // Handle specific OpenAI errors
+    if (error.status === 503) {
+      throw new Error('Image generation is currently at capacity. Please try again in a few moments.');
+    } else if (error.status === 404) {
+      throw new Error('GPT Image 1 model not found. The API might not be available yet.');
+    } else if (error.status === 401) {
+      throw new Error('Invalid API key. Please check your OpenAI API key.');
+    } else if (error.message) {
+      throw new Error(error.message);
+    }
+    
     throw error;
   }
 }
