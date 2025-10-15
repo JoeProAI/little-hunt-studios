@@ -26,6 +26,7 @@ interface VideoGenerationInterfaceProps {
 export function VideoGenerationInterface({ triggerGeneration, onGenerationStart }: VideoGenerationInterfaceProps) {
   const [generations, setGenerations] = useState<GenerationStatus[]>([]);
   const [isGenerating, setIsGenerating] = useState(false);
+  const [apiProvider, setApiProvider] = useState<'openai' | 'replicate'>('replicate');
 
   const generateVideo = async (prompt: string, duration: string = '5s') => {
     onGenerationStart?.();
@@ -42,7 +43,10 @@ export function VideoGenerationInterface({ triggerGeneration, onGenerationStart 
     setGenerations(prev => [newGeneration, ...prev]);
 
     try {
-      const response = await fetch('/api/sora/generate', {
+      // Choose API endpoint based on provider
+      const endpoint = apiProvider === 'replicate' ? '/api/replicate/generate' : '/api/sora/generate';
+      
+      const response = await fetch(endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ prompt, duration }),
@@ -136,9 +140,24 @@ export function VideoGenerationInterface({ triggerGeneration, onGenerationStart 
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-3xl font-bold mb-2">Video Generation</h2>
+        <div className="flex items-center justify-between mb-2">
+          <h2 className="text-3xl font-bold">Video Generation</h2>
+          <div className="flex items-center gap-2">
+            <span className="text-sm text-muted-foreground">API Provider:</span>
+            <select
+              value={apiProvider}
+              onChange={(e) => setApiProvider(e.target.value as 'openai' | 'replicate')}
+              className="px-3 py-1 rounded-md bg-slate-800 border border-slate-700 text-sm"
+            >
+              <option value="replicate">Replicate (MiniMax, Hunyuan)</option>
+              <option value="openai">OpenAI (Sora 2)</option>
+            </select>
+          </div>
+        </div>
         <p className="text-muted-foreground">
-          Monitor your Sora 2 video generations in real-time
+          {apiProvider === 'replicate' 
+            ? 'Using Replicate API - Access to MiniMax Video-01, Hunyuan Video, and more'
+            : 'Using OpenAI Sora 2 API - Premium video generation'}
         </p>
       </div>
 
