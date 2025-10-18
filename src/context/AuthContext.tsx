@@ -1,0 +1,176 @@
+'use client';
+
+import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
+import { 
+  User,
+  onAuthStateChanged,
+  signInWithPopup,
+  GoogleAuthProvider,
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+  signOut as firebaseSignOut,
+} from 'firebase/auth';
+import { doc, getDoc, setDoc, updateDoc, increment } from 'firebase/firestore';
+import { auth, db } from '@/lib/firebase';
+
+interface UserData {
+  email: string;
+  displayName: string;
+  credits: number;
+  subscriptionTier: 'free' | 'pro' | 'studio';
+  totalVideosGenerated: number;
+  totalSpent: number;
+  createdAt: Date;
+}
+
+interface AuthContextType {
+  user: User | null;
+  userData: UserData | null;
+  loading: boolean;
+  signInWithGoogle: () => Promise<void>;
+  signInWithEmail: (email: string, password: string) => Promise<void>;
+  signUpWithEmail: (email: string, password: string, displayName: string) => Promise<void>;
+  signOut: () => Promise<void>;
+  refreshUserData: () => Promise<void>;
+}
+
+const AuthContext = createContext<AuthContextType>({
+  user: null,
+  userData: null,
+  loading: true,
+  signInWithGoogle: async () => {},
+  signInWithEmail: async () => {},
+  signUpWithEmail: async () => {},
+  signOut: async () => {},
+  refreshUserData: async () => {},
+});
+
+export function AuthProvider({ children }: { children: ReactNode }) {
+  const [user, setUser] = useState<User | null>(null);
+  const [userData, setUserData] = useState<UserData | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  const fetchUserData = async (uid: string) => {
+    try {
+      const userDocRef = doc(db, 'users', uid);
+      const userDoc = await getDoc(userDocRef);
+      
+      if (userDoc.exists()) {
+        setUserData(userDoc.data() as UserData);
+      }
+    } catch (error) {
+      console.error('Error fetching user data:', error);
+    }
+  };
+
+  const refreshUserData = async () => {
+    if (user) {
+      await fetchUserData(user.uid);
+    }
+  };
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      setUser(user);
+      
+      if (user) {
+        await fetchUserData(user.uid);
+      } else {
+        setUserData(null);
+      }
+      
+      setLoading(false);
+    });
+
+    return unsubscribe;
+  }, []);
+
+  const signInWithGoogle = async () => {
+    const provider = new GoogleAuthProvider();
+    try {
+      const result = await signInWithPopup(auth, provider);
+      const user = result.user;
+      
+      // Check if user document exists, if not create it
+      const userDocRef = doc(db, 'users', user.uid);
+      const userDoc = await getDoc(userDocRef);
+      
+      if (!userDoc.exists()) {
+        // New user - create profile with 3 free credits
+        await setDoc(userDocRef, {
+          email: user.email,
+          displayName: user.displayName || 'User',
+          credits: 3,
+          subscriptionTier: 'free',
+          totalVideosGenerated: 0,
+          totalSpent: 0,
+          createdAt: new Date(),
+        });
+      }
+    } catch (error: any) {
+      console.error('Google sign-in error:', error);
+      throw new Error(error.message);
+    }
+  };
+
+  const signInWithEmail = async (email: string, password: string) => {
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+    } catch (error: any) {
+      console.error('Email sign-in error:', error);
+      throw new Error(error.message);
+    }
+  };
+
+  const signUpWithEmail = async (email: string, password: string, displayName: string) => {
+    try {
+      const result = await createUserWithEmailAndPassword(auth, email, password);
+      const user = result.user;
+      
+      // Create user profile with 3 free credits
+      const userDocRef = doc(db, 'users', user.uid);
+      await setDoc(userDocRef, {
+        email: user.email,
+        displayName: displayName || 'User',
+        credits: 3,
+        subscriptionTier: 'free',
+        totalVideosGenerated: 0,
+        totalSpent: 0,
+        createdAt: new Date(),
+      });
+    } catch (error: any) {
+      console.error('Email sign-up error:', error);
+      throw new Error(error.message);
+    }
+  };
+
+  const signOut = async () => {
+    try {
+      await firebaseSignOut(auth);
+      setUser(null);
+      setUserData(null);
+    } catch (error: any) {
+      console.error('Sign-out error:', error);
+      throw new Error(error.message);
+    }
+  };
+
+  return (
+    <AuthContext.Provider
+      value={{
+        user,
+        userData,
+        loading,
+        signInWithGoogle,
+        signInWithEmail,
+        signUpWithEmail,
+        signOut,
+        refreshUserData,
+      }}
+    >
+      {children}
+    </AuthContext.Provider>
+  );
+}
+
+export const useAuth = () => useContext(AuthContext);

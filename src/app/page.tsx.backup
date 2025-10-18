@@ -1,9 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { useAuth } from '@/context/AuthContext';
-import { UserMenu } from '@/components/UserMenu';
+import { useState } from 'react';
 import { PromptBuilder } from '@/components/PromptBuilder';
 import { PresetGallery } from '@/components/PresetGallery';
 import { ShotBrowser } from '@/components/ShotBrowser';
@@ -22,16 +19,6 @@ type Tab = 'builder' | 'presets' | 'shots' | 'generate';
 export default function Home() {
   const [activeTab, setActiveTab] = useState<Tab>('builder');
   const [generationTrigger, setGenerationTrigger] = useState<{ prompt: string; duration: string } | null>(null);
-  
-  const { user, loading } = useAuth();
-  const router = useRouter();
-
-  // Redirect to login if not authenticated
-  useEffect(() => {
-    if (!loading && !user) {
-      router.push('/login');
-    }
-  }, [user, loading, router]);
 
   const handlePromptGenerate = (prompt: string, duration: string) => {
     console.log('Generating video:', { prompt, duration });
@@ -58,21 +45,6 @@ export default function Home() {
     { id: 'generate' as Tab, label: 'Generate', icon: Video },
   ];
 
-  // Show loading while checking auth
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-950 via-purple-950 to-slate-950">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-400 mx-auto mb-4"></div>
-          <p className="text-muted-foreground">Loading...</p>
-        </div>
-      </div>
-    );
-  }
-
-  // Don't render if not authenticated
-  if (!user) return null;
-
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-950 via-purple-950/10 to-slate-950">
       {/* Header */}
@@ -92,7 +64,14 @@ export default function Home() {
                 </p>
               </div>
             </div>
-            <UserMenu />
+            <div className="flex items-center gap-2">
+              <Button variant="outline" size="sm">
+                Docs
+              </Button>
+              <Button variant="outline" size="sm">
+                GitHub
+              </Button>
+            </div>
           </div>
         </div>
       </header>

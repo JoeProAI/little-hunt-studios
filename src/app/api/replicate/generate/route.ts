@@ -1,15 +1,25 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { generateVideoWithReplicate } from '@/lib/replicate-api';
+import { deductCredits, hasEnoughCredits } from '@/lib/credits';
+import { addDoc, collection } from 'firebase/firestore';
+import { db } from '@/lib/firebase';
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { prompt, duration = '5s', aspect_ratio = '16:9', model } = body;
+    const { prompt, duration = '5s', aspect_ratio = '16:9', model, userId } = body;
 
     if (!prompt) {
       return NextResponse.json(
         { error: 'Prompt is required' },
         { status: 400 }
+      );
+    }
+
+    if (!userId) {
+      return NextResponse.json(
+        { error: 'Authentication required. Please sign in to generate videos.' },
+        { status: 401 }
       );
     }
 
@@ -21,12 +31,37 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Check if user has enough credits
+    const hasCredits = await hasEnoughCredits(userId, 1);
+    if (!hasCredits) {
+      return NextResponse.json(
+        { error: 'Insufficient credits. You need 1 credit to generate a video. Please purchase more credits to continue.' },
+        { status: 402 }
+      );
+    }
+
+    // Deduct credits BEFORE generation
+    await deductCredits(userId, 1);
+
     // Call Replicate API
     const result = await generateVideoWithReplicate({
       prompt,
       duration,
       aspect_ratio,
       model,
+    });
+
+    // Save video to Firestore
+    await addDoc(collection(db, 'videos'), {
+      userId,
+      prompt,
+      videoUrl: result.video_url || null,
+      status: result.status,
+      duration,
+      aspectRatio: aspect_ratio,
+      model: model || 'openai/sora-2',
+      creditsCost: 1,
+      createdAt: new Date(),
     });
 
     return NextResponse.json(result);
