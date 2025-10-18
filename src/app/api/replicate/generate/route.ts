@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { generateVideoWithReplicate } from '@/lib/replicate-api';
-import { deductCredits, hasEnoughCredits } from '@/lib/credits';
-import { addDoc, collection } from 'firebase/firestore';
-import { db } from '@/lib/firebase';
+import { deductCredits, hasEnoughCredits } from '@/lib/credits-admin';
+import { adminDb } from '@/lib/firebase-admin';
+import { FieldValue } from 'firebase-admin/firestore';
 
 export async function POST(request: NextRequest) {
   try {
@@ -51,8 +51,8 @@ export async function POST(request: NextRequest) {
       model,
     });
 
-    // Save video to Firestore
-    await addDoc(collection(db, 'videos'), {
+    // Save video to Firestore using Admin SDK
+    await adminDb.collection('videos').add({
       userId,
       prompt,
       videoUrl: result.video_url || null,
@@ -61,7 +61,7 @@ export async function POST(request: NextRequest) {
       aspectRatio: aspect_ratio,
       model: model || 'openai/sora-2',
       creditsCost: 1,
-      createdAt: new Date(),
+      createdAt: FieldValue.serverTimestamp(),
     });
 
     return NextResponse.json(result);
