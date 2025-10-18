@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useAuth } from '@/context/AuthContext';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
@@ -27,6 +28,7 @@ export function VideoGenerationInterface({ triggerGeneration, onGenerationStart 
   const [generations, setGenerations] = useState<GenerationStatus[]>([]);
   const [isGenerating, setIsGenerating] = useState(false);
   const [apiProvider, setApiProvider] = useState<'openai' | 'replicate'>('replicate');
+  const { user, refreshUserData } = useAuth();
 
   const generateVideo = async (prompt: string, duration: string = '5s') => {
     onGenerationStart?.();
@@ -49,12 +51,22 @@ export function VideoGenerationInterface({ triggerGeneration, onGenerationStart 
       const response = await fetch(endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ prompt, duration }),
+        body: JSON.stringify({ 
+          prompt, 
+          duration,
+          userId: user?.uid
+        }),
       });
 
-      if (!response.ok) throw new Error('Generation failed');
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Generation failed');
+      }
 
       const data = await response.json();
+      
+      // Refresh user data to update credits display
+      await refreshUserData();
       
       // If using Replicate, poll for actual video completion
       if (apiProvider === 'replicate' && data.id) {
@@ -143,11 +155,11 @@ export function VideoGenerationInterface({ triggerGeneration, onGenerationStart 
           }
         }, 1000);
       }
-    } catch (error) {
+    } catch (error: any) {
       setGenerations(prev =>
         prev.map(gen =>
           gen.id === newGeneration.id
-            ? { ...gen, status: 'failed', error: 'Generation failed' }
+            ? { ...gen, status: 'failed', error: error.message || 'Generation failed' }
             : gen
         )
       );
