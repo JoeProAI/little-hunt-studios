@@ -52,7 +52,13 @@ export async function generateVideoWithReplicate(params: ReplicateVideoParams): 
     } else if (model.includes('veo')) {
       // Google Veo-3, Veo-3 Fast, Veo-3.1, Veo-3.1 Fast
       // Veo requires duration as INTEGER (seconds), not string
-      const durationSeconds = params.duration === '5s' ? 5 : 10;
+      // Veo only accepts: 4, 6, or 8 seconds
+      let durationSeconds = 4;
+      if (params.duration === '5s' || params.duration === '6s') {
+        durationSeconds = 6;
+      } else if (params.duration === '10s' || params.duration === '8s') {
+        durationSeconds = 8;
+      }
       input.duration = durationSeconds;
       input.aspect_ratio = params.aspect_ratio || '16:9';
       input.generate_audio = true; // Veo generates audio by default
