@@ -51,15 +51,6 @@ function initializeAdminApp(): App {
     );
   }
 
-  // Initialize with service account credentials
-  adminApp = initializeApp({
-    credential: cert({
-      projectId,
-      clientEmail,
-      privateKey: privateKey.replace(/\\n/g, '\n'),
-    }),
-  });
-
   return adminApp;
 }
 
