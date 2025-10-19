@@ -68,6 +68,17 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(result);
   } catch (error: any) {
     console.error('Replicate generation error:', error);
+    
+    // Handle Replicate payment errors
+    if (error.message && error.message.includes('402') || error.message.includes('Insufficient credit')) {
+      return NextResponse.json(
+        { 
+          error: 'Insufficient Replicate credits. If you just purchased credits, please wait 2-5 minutes for them to be processed, then try again. Visit https://replicate.com/account/billing to check your balance.' 
+        },
+        { status: 402 }
+      );
+    }
+    
     return NextResponse.json(
       { error: error.message || 'Failed to generate video with Replicate' },
       { status: 500 }
