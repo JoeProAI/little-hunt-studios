@@ -27,7 +27,24 @@ function initializeAdminApp(): App {
     throw new Error('NEXT_PUBLIC_FIREBASE_PROJECT_ID is required');
   }
 
-  if (!clientEmail || !privateKey) {
+  // If we have full service account credentials, use them
+  if (clientEmail && privateKey) {
+    // Handle different private key formats
+    let formattedKey = privateKey;
+    
+    // If the key has literal \n strings, replace them with actual newlines
+    if (formattedKey.includes('\\n')) {
+      formattedKey = formattedKey.replace(/\\n/g, '\n');
+    }
+    
+    adminApp = initializeApp({
+      credential: cert({
+        projectId,
+        clientEmail,
+        privateKey: formattedKey,
+      }),
+    });
+  } else {
     throw new Error(
       'Firebase Admin requires FIREBASE_CLIENT_EMAIL and FIREBASE_PRIVATE_KEY environment variables. ' +
       'Get them from: https://console.firebase.google.com/project/little-hunt-studios/settings/serviceaccounts/adminsdk'
