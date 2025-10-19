@@ -19,30 +19,29 @@ function initializeAdminApp(): App {
     return adminApp;
   }
 
-  // Initialize with service account or default credentials
   const projectId = process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID;
   const clientEmail = process.env.FIREBASE_CLIENT_EMAIL;
   const privateKey = process.env.FIREBASE_PRIVATE_KEY;
 
   if (!projectId) {
-    throw new Error('NEXT_PUBLIC_FIREBASE_PROJECT_ID is not set');
+    throw new Error('NEXT_PUBLIC_FIREBASE_PROJECT_ID is required');
   }
 
-  // If we have full service account credentials, use them
-  if (clientEmail && privateKey) {
-    adminApp = initializeApp({
-      credential: cert({
-        projectId,
-        clientEmail,
-        privateKey: privateKey.replace(/\\n/g, '\n'),
-      }),
-    });
-  } else {
-    // Fallback: Use project ID only (works with default credentials in some environments)
-    adminApp = initializeApp({
-      projectId,
-    });
+  if (!clientEmail || !privateKey) {
+    throw new Error(
+      'Firebase Admin requires FIREBASE_CLIENT_EMAIL and FIREBASE_PRIVATE_KEY environment variables. ' +
+      'Get them from: https://console.firebase.google.com/project/little-hunt-studios/settings/serviceaccounts/adminsdk'
+    );
   }
+
+  // Initialize with service account credentials
+  adminApp = initializeApp({
+    credential: cert({
+      projectId,
+      clientEmail,
+      privateKey: privateKey.replace(/\\n/g, '\n'),
+    }),
+  });
 
   return adminApp;
 }

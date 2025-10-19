@@ -106,6 +106,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           totalSpent: 0,
           createdAt: new Date(),
         });
+        // Immediately fetch the new user data
+        await fetchUserData(user.uid);
       }
     } catch (error: any) {
       console.error('Google sign-in error:', error);
@@ -138,6 +140,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         totalSpent: 0,
         createdAt: new Date(),
       });
+      
+      // Immediately fetch the new user data
+      await fetchUserData(user.uid);
     } catch (error: any) {
       console.error('Email sign-up error:', error);
       throw new Error(error.message);
