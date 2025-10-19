@@ -28,6 +28,7 @@ export function VideoGenerationInterface({ triggerGeneration, onGenerationStart 
   const [generations, setGenerations] = useState<GenerationStatus[]>([]);
   const [isGenerating, setIsGenerating] = useState(false);
   const [apiProvider, setApiProvider] = useState<'openai' | 'replicate'>('replicate');
+  const [model, setModel] = useState<'sora' | 'minimax'>('sora');
   const { user, refreshUserData } = useAuth();
 
   const generateVideo = useCallback(async (prompt: string, duration: string = '5s') => {
@@ -54,7 +55,8 @@ export function VideoGenerationInterface({ triggerGeneration, onGenerationStart 
         body: JSON.stringify({ 
           prompt, 
           duration,
-          userId: user?.uid
+          userId: user?.uid,
+          model: apiProvider === 'replicate' ? (model === 'minimax' ? 'minimax/video-01' : 'openai/sora-2') : undefined
         }),
       });
 
@@ -221,22 +223,24 @@ export function VideoGenerationInterface({ triggerGeneration, onGenerationStart 
       <div>
         <div className="flex items-center justify-between mb-2">
           <h2 className="text-3xl font-bold">Video Generation</h2>
-          <div className="flex items-center gap-2">
-            <span className="text-sm text-muted-foreground">API Provider:</span>
-            <select
-              value={apiProvider}
-              onChange={(e) => setApiProvider(e.target.value as 'openai' | 'replicate')}
-              className="px-3 py-1 rounded-md bg-slate-800 border border-slate-700 text-sm"
-            >
-              <option value="replicate">Sora 2 via Replicate (Working!)</option>
-              <option value="openai" disabled>Sora 2 Direct (Not Available)</option>
-            </select>
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2">
+              <span className="text-sm text-muted-foreground">Model:</span>
+              <select
+                value={model}
+                onChange={(e) => setModel(e.target.value as 'sora' | 'minimax')}
+                className="px-3 py-1 rounded-md bg-slate-800 border border-slate-700 text-sm"
+              >
+                <option value="sora">Sora-2 (Highest Quality)</option>
+                <option value="minimax">MiniMax (Less Strict)</option>
+              </select>
+            </div>
           </div>
         </div>
         <p className="text-muted-foreground">
-          {apiProvider === 'replicate' 
-            ? '✅ Using Sora 2 via Replicate - Highest quality video generation!'
-            : '⚠️ OpenAI Sora 2 Direct API is not available. Use Replicate instead.'}
+          {model === 'sora'
+            ? '✅ Using Sora-2 - Best quality, but strict content filters. Use MiniMax if you get "sensitive" errors.'
+            : '✅ Using MiniMax - Great quality with more relaxed content filters.'}
         </p>
       </div>
 
