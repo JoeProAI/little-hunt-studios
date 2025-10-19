@@ -131,16 +131,6 @@ export async function generateVideoWithReplicate(params: ReplicateVideoParams): 
       input.video_length = params.duration === '5s' ? '5s' : '10s';
       input.resolution = params.aspect_ratio === '9:16' ? '720x1280' : '1280x720';
       
-    } else if (model.includes('gen4')) {
-      // Runway Gen-4
-      input.duration = params.duration === '5s' ? '5s' : '10s';
-      input.aspect_ratio = params.aspect_ratio || '16:9';
-      
-    } else if (model.includes('ovi')) {
-      // Character.AI Ovi I2V (requires image input)
-      input.duration = params.duration || '5s';
-      // Note: This model requires an image parameter which should be added in UI
-      
     } else if (model.includes('mochi')) {
       // Genmo Mochi-1
       input.num_frames = params.duration === '5s' ? 84 : 163;
@@ -285,8 +275,6 @@ export const REPLICATE_VIDEO_MODELS = {
   // Creative & Specialized
   'minimax/video-01-director': 'MiniMax Director (Camera Control)',
   'minimax/video-01': 'MiniMax Video-01 (6s)',
-  'character-ai/ovi-i2v': 'Ovi I2V (Audio from Image+Text)',
-  'runwayml/gen4-aleph': 'Runway Gen-4 Aleph (Edit & Transform)',
   
   // Open Source
   'tencent/hunyuan-video': 'Hunyuan Video (Open Source)',
