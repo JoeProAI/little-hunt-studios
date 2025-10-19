@@ -210,7 +210,7 @@ export function VideoGenerationInterface({ triggerGeneration, onGenerationStart 
       );
       setIsGenerating(false);
     }
-  }, [apiProvider, user?.uid, refreshUserData, onGenerationStart]);
+  }, [apiProvider, model, user?.uid, refreshUserData, onGenerationStart]);
 
   const getStatusIcon = (status: GenerationStatus['status']) => {
     switch (status) {

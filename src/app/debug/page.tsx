@@ -53,7 +53,7 @@ export default function DebugPage() {
               <li>Click on the document</li>
               <li>Edit the <strong>credits</strong> field and set it to 10</li>
               <li>Click Save</li>
-              <li>Come back here and click "Refresh User Data"</li>
+              <li>Come back here and click &quot;Refresh User Data&quot;</li>
             </ol>
           </div>
         </CardContent>
