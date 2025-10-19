@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { generateVideoWithReplicate } from '@/lib/replicate-api';
 import { deductCredits, hasEnoughCredits } from '@/lib/credits-admin';
-import { adminDb } from '@/lib/firebase-admin';
+import { getAdminDb } from '@/lib/firebase-admin';
 import { FieldValue } from 'firebase-admin/firestore';
 
 export async function POST(request: NextRequest) {
@@ -51,8 +51,9 @@ export async function POST(request: NextRequest) {
       model,
     });
 
-    // Save video to Firestore using Admin SDK
-    await adminDb.collection('videos').add({
+    // Save video to Firestore using Admin SDK (lazy-loaded)
+    const db = getAdminDb();
+    await db.collection('videos').add({
       userId,
       prompt,
       videoUrl: result.video_url || null,

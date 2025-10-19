@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -30,7 +30,7 @@ export function VideoGenerationInterface({ triggerGeneration, onGenerationStart 
   const [apiProvider, setApiProvider] = useState<'openai' | 'replicate'>('replicate');
   const { user, refreshUserData } = useAuth();
 
-  const generateVideo = async (prompt: string, duration: string = '5s') => {
+  const generateVideo = useCallback(async (prompt: string, duration: string = '5s') => {
     onGenerationStart?.();
     setIsGenerating(true);
     
@@ -165,7 +165,7 @@ export function VideoGenerationInterface({ triggerGeneration, onGenerationStart 
       );
       setIsGenerating(false);
     }
-  };
+  }, [apiProvider, user?.uid, refreshUserData, onGenerationStart]);
 
   const getStatusIcon = (status: GenerationStatus['status']) => {
     switch (status) {
@@ -197,7 +197,7 @@ export function VideoGenerationInterface({ triggerGeneration, onGenerationStart 
     if (triggerGeneration) {
       generateVideo(triggerGeneration.prompt, triggerGeneration.duration);
     }
-  }, [triggerGeneration]);
+  }, [triggerGeneration, generateVideo]);
 
   return (
     <div className="space-y-6">

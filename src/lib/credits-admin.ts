@@ -1,4 +1,4 @@
-import { adminDb } from '@/lib/firebase-admin';
+import { getAdminDb } from '@/lib/firebase-admin';
 import { FieldValue } from 'firebase-admin/firestore';
 
 /**
@@ -6,7 +6,8 @@ import { FieldValue } from 'firebase-admin/firestore';
  */
 
 export async function deductCredits(userId: string, amount: number = 1): Promise<void> {
-  const userRef = adminDb.collection('users').doc(userId);
+  const db = getAdminDb();
+  const userRef = db.collection('users').doc(userId);
   const userDoc = await userRef.get();
   
   if (!userDoc.exists) {
@@ -26,7 +27,7 @@ export async function deductCredits(userId: string, amount: number = 1): Promise
   });
   
   // Log transaction
-  await adminDb.collection('transactions').add({
+  await db.collection('transactions').add({
     userId,
     type: 'generation',
     amount: -amount,
@@ -36,14 +37,15 @@ export async function deductCredits(userId: string, amount: number = 1): Promise
 }
 
 export async function addCredits(userId: string, amount: number, paymentId?: string): Promise<void> {
-  const userRef = adminDb.collection('users').doc(userId);
+  const db = getAdminDb();
+  const userRef = db.collection('users').doc(userId);
   
   await userRef.update({
     credits: FieldValue.increment(amount),
   });
   
   // Log transaction
-  await adminDb.collection('transactions').add({
+  await db.collection('transactions').add({
     userId,
     type: 'purchase',
     amount: amount,
@@ -54,7 +56,8 @@ export async function addCredits(userId: string, amount: number, paymentId?: str
 }
 
 export async function getCredits(userId: string): Promise<number> {
-  const userDoc = await adminDb.collection('users').doc(userId).get();
+  const db = getAdminDb();
+  const userDoc = await db.collection('users').doc(userId).get();
   
   if (!userDoc.exists) {
     throw new Error('User not found');
