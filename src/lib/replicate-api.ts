@@ -54,6 +54,22 @@ export async function generateVideoWithReplicate(params: ReplicateVideoParams): 
       // MiniMax parameters
       input.num_frames = params.duration === '5s' ? 150 : 300;
       if (params.aspect_ratio) input.aspect_ratio = params.aspect_ratio;
+    } else if (model.includes('pixverse')) {
+      // Pixverse parameters
+      input.duration = params.duration || '5s';
+      if (params.aspect_ratio) input.aspect_ratio = params.aspect_ratio;
+    } else if (model.includes('hunyuan')) {
+      // Hunyuan parameters
+      input.video_length = params.duration === '5s' ? '5s' : '10s';
+      if (params.aspect_ratio) input.aspect_ratio = params.aspect_ratio;
+    } else if (model.includes('mochi')) {
+      // Mochi parameters
+      input.num_frames = params.duration === '5s' ? 84 : 163;
+      if (params.aspect_ratio) input.aspect_ratio = params.aspect_ratio;
+    } else if (model.includes('luma') || model.includes('ray')) {
+      // Luma Ray2 parameters
+      input.duration = params.duration || '5s';
+      if (params.aspect_ratio) input.aspect_ratio = params.aspect_ratio;
     }
     
     console.log('Replicate input:', input);
@@ -76,15 +92,27 @@ export async function generateVideoWithReplicate(params: ReplicateVideoParams): 
     console.error('Replicate video generation error:', error);
     console.error('Error details:', JSON.stringify(error, null, 2));
     
-    if (error.message?.includes('authentication')) {
+    // Extract error message from various possible formats
+    const errorMessage = error.message || error.detail || error.toString();
+    console.error('Extracted error message:', errorMessage);
+    
+    if (errorMessage?.includes('authentication')) {
       throw new Error('Invalid Replicate API token. Please check your REPLICATE_API_TOKEN.');
     }
     
-    if (error.message?.includes('not found')) {
-      throw new Error(`Model not found on Replicate. The model might not be available yet or the name might be wrong. Error: ${error.message}`);
+    if (errorMessage?.includes('not found')) {
+      throw new Error(`Model not found on Replicate. The model might not be available yet or the name might be wrong. Error: ${errorMessage}`);
     }
     
-    throw new Error(error.message || 'Failed to generate video with Replicate');
+    // Detect content moderation errors (preserve original error for retry logic)
+    if (errorMessage?.toLowerCase().includes('sensitive') || 
+        errorMessage?.toLowerCase().includes('flagged') || 
+        errorMessage?.includes('E005') ||
+        errorMessage?.includes('NSFW')) {
+      throw new Error(`Content flagged: ${errorMessage}`);
+    }
+    
+    throw new Error(errorMessage || 'Failed to generate video with Replicate');
   }
 }
 
@@ -142,10 +170,12 @@ export async function generateImageWithReplicate(prompt: string, model: string =
  * Available video models on Replicate
  */
 export const REPLICATE_VIDEO_MODELS = {
-  'openai/sora-2': 'Sora 2 via Replicate (Highest Quality)',
-  'minimax/video-01': 'MiniMax Video-01 (Fast, Good Quality)',
+  'openai/sora-2': 'Sora-2 (Highest Quality, Strict Filters)',
+  'pixverse/pixverse': 'Pixverse (Great Quality, Relaxed Filters)',
+  'minimax/video-01': 'MiniMax (Fast, Good Quality)',
   'tencent/hunyuan-video': 'Hunyuan Video (High Quality)',
-  'lucataco/mochi-1-preview': 'Mochi-1 (Experimental)',
+  'genmo/mochi-1-preview': 'Mochi-1 (Experimental)',
+  'luma/ray2': 'Luma Ray2 (High Quality)',
 } as const;
 
 /**

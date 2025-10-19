@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
 import { Loader2, Download, Play, CheckCircle2, XCircle } from 'lucide-react';
+import { REPLICATE_VIDEO_MODELS } from '@/lib/replicate-api';
 
 interface GenerationStatus {
   id: string;
@@ -28,10 +29,10 @@ export function VideoGenerationInterface({ triggerGeneration, onGenerationStart 
   const [generations, setGenerations] = useState<GenerationStatus[]>([]);
   const [isGenerating, setIsGenerating] = useState(false);
   const [apiProvider, setApiProvider] = useState<'openai' | 'replicate'>('replicate');
-  const [model, setModel] = useState<'sora' | 'minimax'>('sora');
+  const [selectedModel, setSelectedModel] = useState<string>('openai/sora-2');
   const { user, refreshUserData } = useAuth();
 
-  const generateVideo = useCallback(async (prompt: string, duration: string = '5s', retryWithMinimax: boolean = false) => {
+  const generateVideo = useCallback(async (prompt: string, duration: string = '5s', retryWithPixverse: boolean = false) => {
     onGenerationStart?.();
     setIsGenerating(true);
     
@@ -49,8 +50,8 @@ export function VideoGenerationInterface({ triggerGeneration, onGenerationStart 
       // Choose API endpoint based on provider
       const endpoint = apiProvider === 'replicate' ? '/api/replicate/generate' : '/api/sora/generate';
       
-      // Use MiniMax if retrying or if manually selected
-      const selectedModel = retryWithMinimax ? 'minimax/video-01' : (model === 'minimax' ? 'minimax/video-01' : 'openai/sora-2');
+      // Use Pixverse if retrying, otherwise use user's selected model
+      const modelToUse = retryWithPixverse ? 'pixverse/pixverse' : selectedModel;
       
       const response = await fetch(endpoint, {
         method: 'POST',
@@ -59,7 +60,7 @@ export function VideoGenerationInterface({ triggerGeneration, onGenerationStart 
           prompt, 
           duration,
           userId: user?.uid,
-          model: apiProvider === 'replicate' ? selectedModel : undefined
+          model: apiProvider === 'replicate' ? modelToUse : undefined
         }),
       });
 
@@ -68,9 +69,15 @@ export function VideoGenerationInterface({ triggerGeneration, onGenerationStart 
         const errorMessage = errorData.error || 'Generation failed';
         
         // Check if it's a content moderation error from Sora-2
-        if ((errorMessage.includes('sensitive') || errorMessage.includes('flagged') || errorMessage.includes('E005')) && !retryWithMinimax && model === 'sora') {
-          // Auto-retry with MiniMax
-          console.log('Sora-2 blocked by content filter. Automatically retrying with MiniMax...');
+        const isModerationError = errorMessage.toLowerCase().includes('sensitive') || 
+                                  errorMessage.toLowerCase().includes('flagged') || 
+                                  errorMessage.includes('E005') ||
+                                  errorMessage.includes('NSFW') ||
+                                  errorMessage.toLowerCase().includes('content flagged');
+        
+        if (isModerationError && !retryWithPixverse && selectedModel === 'openai/sora-2') {
+          // Auto-retry with Pixverse
+          console.log('Sora-2 blocked by content filter. Automatically retrying with Pixverse...');
           
           // Update generation status
           setGenerations(prev =>
@@ -85,7 +92,7 @@ export function VideoGenerationInterface({ triggerGeneration, onGenerationStart 
           setGenerations(prev =>
             prev.map(gen =>
               gen.id === newGeneration.id
-                ? { ...gen, prompt: `${prompt}\n\n⚠️ Sora-2 blocked - retrying with MiniMax...` }
+                ? { ...gen, prompt: `${prompt}\n\n⚠️ Sora-2 blocked - retrying with Pixverse...` }
                 : gen
             )
           );
@@ -210,7 +217,7 @@ export function VideoGenerationInterface({ triggerGeneration, onGenerationStart 
       );
       setIsGenerating(false);
     }
-  }, [apiProvider, model, user?.uid, refreshUserData, onGenerationStart]);
+  }, [apiProvider, selectedModel, user?.uid, refreshUserData, onGenerationStart]);
 
   const getStatusIcon = (status: GenerationStatus['status']) => {
     switch (status) {
@@ -253,20 +260,25 @@ export function VideoGenerationInterface({ triggerGeneration, onGenerationStart 
             <div className="flex items-center gap-2">
               <span className="text-sm text-muted-foreground">Model:</span>
               <select
-                value={model}
-                onChange={(e) => setModel(e.target.value as 'sora' | 'minimax')}
-                className="px-3 py-1 rounded-md bg-slate-800 border border-slate-700 text-sm"
+                value={selectedModel}
+                onChange={(e) => setSelectedModel(e.target.value)}
+                className="px-3 py-1.5 rounded-md bg-slate-800 border border-slate-700 text-sm min-w-[280px]"
               >
-                <option value="sora">Sora-2 (Highest Quality)</option>
-                <option value="minimax">MiniMax (Less Strict)</option>
+                {Object.entries(REPLICATE_VIDEO_MODELS).map(([modelId, modelName]) => (
+                  <option key={modelId} value={modelId}>
+                    {modelName}
+                  </option>
+                ))}
               </select>
             </div>
           </div>
         </div>
         <p className="text-muted-foreground">
-          {model === 'sora'
-            ? '✅ Using Sora-2 - Best quality, but strict content filters. Use MiniMax if you get "sensitive" errors.'
-            : '✅ Using MiniMax - Great quality with more relaxed content filters.'}
+          {selectedModel === 'openai/sora-2'
+            ? '✅ Using Sora-2 - Best quality, but strict content filters. Will auto-retry with Pixverse if blocked.'
+            : selectedModel === 'pixverse/pixverse'
+            ? '✅ Using Pixverse - Great quality with more relaxed content filters. Auto-fallback for Sora-2.'
+            : '✅ Alternative model selected. May have different quality and filter characteristics.'}
         </p>
       </div>
 
