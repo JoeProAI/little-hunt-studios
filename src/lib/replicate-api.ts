@@ -36,9 +36,9 @@ export async function generateVideoWithReplicate(params: ReplicateVideoParams): 
       prompt: params.prompt,
     };
 
-    // Add model-specific parameters
+    // Add model-specific parameters based on Replicate API requirements
     if (model.includes('sora')) {
-      // Sora 2 / Sora 2 Pro parameters
+      // OpenAI Sora-2 and Sora-2 Pro
       input.duration = params.duration || '5s';
       const aspectRatio = params.aspect_ratio || '16:9';
       input.aspect_ratio = aspectRatio === '9:16' ? 'portrait' : 'landscape';
@@ -47,48 +47,102 @@ export async function generateVideoWithReplicate(params: ReplicateVideoParams): 
         throw new Error('OPENAI_API_KEY environment variable is required for Sora generation');
       }
       input.openai_api_key = process.env.OPENAI_API_KEY;
-      
       console.log(`Using ${model} with OpenAI key`);
+      
     } else if (model.includes('veo')) {
-      // Google Veo parameters
+      // Google Veo-3, Veo-3 Fast, Veo-3.1, Veo-3.1 Fast
       input.duration = params.duration || '5s';
-      if (params.aspect_ratio) input.aspect_ratio = params.aspect_ratio;
-    } else if (model.includes('seedance')) {
-      // Seedance parameters
-      input.duration = params.duration === '5s' ? '5s' : '10s';
-      if (params.aspect_ratio) input.aspect_ratio = params.aspect_ratio;
-    } else if (model.includes('hailuo')) {
-      // Hailuo parameters
-      input.duration = params.duration === '5s' ? '6s' : '10s';
-      if (params.aspect_ratio) input.aspect_ratio = params.aspect_ratio;
-    } else if (model.includes('kling')) {
-      // Kling parameters
-      input.duration = params.duration === '5s' ? '5s' : '10s';
-      if (params.aspect_ratio) input.aspect_ratio = params.aspect_ratio;
-    } else if (model.includes('minimax')) {
-      // MiniMax parameters
-      input.num_frames = params.duration === '5s' ? 150 : 300;
-      if (params.aspect_ratio) input.aspect_ratio = params.aspect_ratio;
+      input.aspect_ratio = params.aspect_ratio || '16:9';
+      input.generate_audio = true; // Veo generates audio by default
+      
     } else if (model.includes('pixverse')) {
-      // Pixverse parameters
-      input.duration = params.duration || '5s';
-      if (params.aspect_ratio) input.aspect_ratio = params.aspect_ratio;
+      // Pixverse v4, v4.5, v5
+      input.duration = params.duration === '5s' ? '5s' : '8s'; // Pixverse supports 5s or 8s
+      input.resolution = '1080p'; // Default to 1080p
+      input.aspect_ratio = params.aspect_ratio || '16:9';
+      
+    } else if (model.includes('hailuo')) {
+      // MiniMax Hailuo-02 and Hailuo-02-fast
+      input.duration = params.duration === '5s' ? '6s' : '10s'; // Hailuo uses 6s or 10s
+      input.quality = model.includes('fast') ? 'standard' : 'pro'; // 512p vs 768p/1080p
+      input.aspect_ratio = params.aspect_ratio || '16:9';
+      
+    } else if (model.includes('seedance')) {
+      // ByteDance Seedance-1-Pro and Seedance-1-Lite
+      input.duration = params.duration === '5s' ? '5s' : '10s';
+      input.resolution = model.includes('pro') ? '1080p' : '720p';
+      input.aspect_ratio = params.aspect_ratio || '16:9';
+      
+    } else if (model.includes('kling')) {
+      // Kling v1.5, v1.6, v2.0, v2.1, v2.5
+      input.duration = params.duration === '5s' ? '5s' : '10s';
+      
+      // Set resolution based on version
+      if (model.includes('pro') || model.includes('master')) {
+        input.aspect_ratio = '1080p';
+      } else if (model.includes('standard')) {
+        input.aspect_ratio = '720p';
+      } else {
+        input.aspect_ratio = params.aspect_ratio || '16:9';
+      }
+      
+    } else if (model.includes('minimax/video-01')) {
+      // MiniMax Video-01 (different from Hailuo)
+      input.num_frames = params.duration === '5s' ? 150 : 300;
+      input.aspect_ratio = params.aspect_ratio || '16:9';
+      
     } else if (model.includes('wan')) {
-      // Wan parameters
-      input.duration = params.duration || '5s';
-      if (params.aspect_ratio) input.aspect_ratio = params.aspect_ratio;
+      // Alibaba Wan 2.1, 2.2, 2.5
+      if (model.includes('2.5')) {
+        // Wan 2.5 format
+        input.duration = params.duration || '5s';
+        input.aspect_ratio = params.aspect_ratio || '16:9';
+      } else {
+        // Wan 2.1/2.2 format
+        input.video_length = params.duration === '5s' ? 5 : 10;
+        input.aspect_ratio = params.aspect_ratio || '16:9';
+      }
+      
+    } else if (model.includes('luma')) {
+      // Luma Ray, Ray-2, Ray-Flash
+      if (model.includes('flash')) {
+        // Ray Flash 2
+        input.duration = params.duration === '5s' ? '5s' : '9s';
+        // Resolution is in the model name (540p, 720p)
+      } else if (model.includes('ray-2')) {
+        // Ray 2
+        input.duration = params.duration === '5s' ? '5s' : '9s';
+      } else {
+        // Original Ray (Dream Machine)
+        input.aspect_ratio = params.aspect_ratio || '16:9';
+      }
+      
     } else if (model.includes('hunyuan')) {
-      // Hunyuan parameters
+      // Tencent Hunyuan Video
       input.video_length = params.duration === '5s' ? '5s' : '10s';
-      if (params.aspect_ratio) input.aspect_ratio = params.aspect_ratio;
-    } else if (model.includes('mochi')) {
-      // Mochi parameters
-      input.num_frames = params.duration === '5s' ? 84 : 163;
-      if (params.aspect_ratio) input.aspect_ratio = params.aspect_ratio;
-    } else if (model.includes('luma') || model.includes('ray')) {
-      // Luma Ray parameters
+      input.resolution = params.aspect_ratio === '9:16' ? '720x1280' : '1280x720';
+      
+    } else if (model.includes('gen4')) {
+      // Runway Gen-4
+      input.duration = params.duration === '5s' ? '5s' : '10s';
+      input.aspect_ratio = params.aspect_ratio || '16:9';
+      
+    } else if (model.includes('ovi')) {
+      // Character.AI Ovi I2V (requires image input)
       input.duration = params.duration || '5s';
-      if (params.aspect_ratio) input.aspect_ratio = params.aspect_ratio;
+      // Note: This model requires an image parameter which should be added in UI
+      
+    } else if (model.includes('mochi')) {
+      // Genmo Mochi-1
+      input.num_frames = params.duration === '5s' ? 84 : 163;
+      input.aspect_ratio = params.aspect_ratio || '16:9';
+      
+    } else {
+      // Default parameters for any other model
+      input.duration = params.duration || '5s';
+      if (params.aspect_ratio) {
+        input.aspect_ratio = params.aspect_ratio;
+      }
     }
     
     console.log('Replicate input:', input);
