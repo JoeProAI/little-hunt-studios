@@ -38,15 +38,17 @@ export async function generateVideoWithReplicate(params: ReplicateVideoParams): 
 
     // Add model-specific parameters
     if (model.includes('sora')) {
-      // Sora 2 parameters
+      // Sora 2 / Sora 2 Pro parameters
       input.duration = params.duration || '5s';
       const aspectRatio = params.aspect_ratio || '16:9';
       input.aspect_ratio = aspectRatio === '9:16' ? 'portrait' : 'landscape';
       
       if (!process.env.OPENAI_API_KEY) {
-        throw new Error('OPENAI_API_KEY environment variable is required for Sora-2 generation');
+        throw new Error('OPENAI_API_KEY environment variable is required for Sora generation');
       }
       input.openai_api_key = process.env.OPENAI_API_KEY;
+      
+      console.log(`Using ${model} with OpenAI key`);
     } else if (model.includes('veo')) {
       // Google Veo parameters
       input.duration = params.duration || '5s';
@@ -187,31 +189,43 @@ export async function generateImageWithReplicate(prompt: string, model: string =
  * Available video models on Replicate
  */
 export const REPLICATE_VIDEO_MODELS = {
-  // Premium/Default
-  'openai/sora-2': 'Sora-2 (Highest Quality, Strict Filters)',
+  // Premium - Latest & Best
+  'openai/sora-2-pro': 'Sora-2 Pro ⭐ (Most Advanced, Synced Audio)',
+  'openai/sora-2': 'Sora-2 (Flagship, Synced Audio)',
+  'google/veo-3.1': 'Google Veo-3.1 (NEW! Higher Fidelity, Audio)',
+  'google/veo-3.1-fast': 'Google Veo-3.1 Fast (NEW! Faster & Cheaper)',
   'google/veo-3': 'Google Veo-3 (Flagship, with Audio)',
-  'google/veo-3-fast': 'Google Veo-3 Fast (Faster & Cheaper)',
+  'google/veo-3-fast': 'Google Veo-3 Fast',
   
-  // Recommended High Quality
+  // High Quality - Recommended
   'pixverse/pixverse-v5': 'Pixverse v5 (Enhanced Motion, 1080p)',
   'pixverse/pixverse-v4.5': 'Pixverse v4.5 (Complex Actions)',
   'minimax/hailuo-02': 'Hailuo 2 (Real World Physics, 1080p)',
+  'minimax/hailuo-02-fast': 'Hailuo 2 Fast (Low Cost, 512p)',
   'bytedance/seedance-1-pro': 'Seedance Pro (5s-10s, 1080p)',
+  'bytedance/seedance-1-lite': 'Seedance Lite (480p-720p)',
   
   // Fast & Efficient
-  'luma/ray-flash-2-720p': 'Luma Ray Flash 720p (Fast)',
+  'luma/ray-flash-2-720p': 'Luma Ray Flash 720p',
   'luma/ray-flash-2-540p': 'Luma Ray Flash 540p (Fastest)',
+  'luma/ray': 'Luma Ray (Dream Machine)',
   'wan-video/wan-2.5-t2v-fast': 'Wan 2.5 T2V Fast',
-  'bytedance/seedance-1-lite': 'Seedance Lite (480p-720p)',
+  'wan-video/wan-2.5-t2v': 'Wan 2.5 T2V (with Audio)',
   
   // Premium Alternatives
   'kwaivgi/kling-v2.5-turbo-pro': 'Kling 2.5 Turbo Pro (Cinematic)',
   'kwaivgi/kling-v2.1-master': 'Kling 2.1 Master (1080p)',
-  'luma/ray': 'Luma Ray (Dream Machine)',
+  'kwaivgi/kling-v2.1': 'Kling 2.1 (720p-1080p)',
+  'kwaivgi/kling-v1.6-pro': 'Kling 1.6 Pro (1080p)',
+  'kwaivgi/kling-v1.6-standard': 'Kling 1.6 Standard (720p)',
   
-  // Open Source & Experimental
-  'wan-video/wan-2.5-t2v': 'Wan 2.5 T2V (with Audio)',
+  // Creative & Specialized
+  'minimax/video-01-director': 'MiniMax Director (Camera Control)',
   'minimax/video-01': 'MiniMax Video-01 (6s)',
+  'character-ai/ovi-i2v': 'Ovi I2V (Audio from Image+Text)',
+  'runwayml/gen4-aleph': 'Runway Gen-4 Aleph (Edit & Transform)',
+  
+  // Open Source
   'tencent/hunyuan-video': 'Hunyuan Video (Open Source)',
 } as const;
 

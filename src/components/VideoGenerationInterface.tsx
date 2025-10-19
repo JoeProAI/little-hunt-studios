@@ -275,11 +275,19 @@ export function VideoGenerationInterface({ triggerGeneration, onGenerationStart 
           </div>
         </div>
         <p className="text-muted-foreground">
-          {selectedModel === 'openai/sora-2'
-            ? '✅ Using Sora-2 - Best quality, but strict content filters. Will auto-retry with Pixverse if blocked.'
-            : selectedModel === 'pixverse/pixverse'
-            ? '✅ Using Pixverse - Great quality with more relaxed content filters. Auto-fallback for Sora-2.'
-            : '✅ Alternative model selected. May have different quality and filter characteristics.'}
+          {selectedModel.includes('sora')
+            ? `✅ Using ${selectedModel.includes('pro') ? 'Sora-2 Pro' : 'Sora-2'} - Best quality, but strict filters. Will auto-retry with Pixverse v5 if blocked.`
+            : selectedModel.includes('veo-3.1')
+            ? '✅ Using Google Veo-3.1 (NEW!) - Higher fidelity with context-aware audio.'
+            : selectedModel.includes('veo')
+            ? '✅ Using Google Veo - High quality with audio generation.'
+            : selectedModel.includes('pixverse')
+            ? '✅ Using Pixverse - Great quality with relaxed filters. Auto-fallback for Sora.'
+            : selectedModel.includes('kling')
+            ? '✅ Using Kling - Cinematic depth and smooth motion.'
+            : selectedModel.includes('hailuo')
+            ? '✅ Using Hailuo - Excels at real world physics.'
+            : '✅ Alternative model selected. Each model has unique strengths.'}
         </p>
       </div>
 
