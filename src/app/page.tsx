@@ -30,12 +30,36 @@ export default function Home() {
   const { user, loading } = useAuth();
   const router = useRouter();
 
-  // Redirect to login if not authenticated
+  // Load preferred model from localStorage
   useEffect(() => {
-    if (!loading && !user) {
-      router.push('/login');
+    if (typeof window !== 'undefined') {
+      const preferred = localStorage.getItem('preferredModel');
+      if (preferred) {
+        setSelectedModel(preferred);
+      }
+    }
+  }, []);
+
+  // Redirect to login if not authenticated, or to model selection if first time
+  useEffect(() => {
+    if (!loading) {
+      if (!user) {
+        router.push('/login');
+      } else if (typeof window !== 'undefined') {
+        const hasSeenModelSelection = localStorage.getItem('hasSeenModelSelection');
+        if (!hasSeenModelSelection) {
+          router.push('/select-model');
+        }
+      }
     }
   }, [user, loading, router]);
+
+  // Save model preference when changed
+  useEffect(() => {
+    if (typeof window !== 'undefined' && selectedModel) {
+      localStorage.setItem('preferredModel', selectedModel);
+    }
+  }, [selectedModel]);
 
   const handlePromptGenerate = (prompt: string, duration: string) => {
     console.log('Generating video:', { prompt, duration });
