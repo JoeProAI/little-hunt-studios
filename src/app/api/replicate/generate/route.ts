@@ -77,12 +77,22 @@ export async function POST(request: NextRequest) {
     console.error('Replicate generation error:', error);
     
     // Handle Replicate payment errors
-    if (error.message && error.message.includes('402') || error.message.includes('Insufficient credit')) {
+    if (error.message && (error.message.includes('402') || error.message.includes('Insufficient credit'))) {
       return NextResponse.json(
         { 
           error: 'Insufficient Replicate credits. If you just purchased credits, please wait 2-5 minutes for them to be processed, then try again. Visit https://replicate.com/account/billing to check your balance.' 
         },
         { status: 402 }
+      );
+    }
+    
+    // Handle content moderation errors
+    if (error.message && (error.message.includes('sensitive') || error.message.includes('flagged') || error.message.includes('E005'))) {
+      return NextResponse.json(
+        { 
+          error: 'Content flagged by AI safety filters. Try rephrasing your prompt with different words. Your credit has been automatically refunded.' 
+        },
+        { status: 422 }
       );
     }
     

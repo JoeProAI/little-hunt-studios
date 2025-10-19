@@ -60,7 +60,14 @@ export function VideoGenerationInterface({ triggerGeneration, onGenerationStart 
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.error || 'Generation failed');
+        const errorMessage = errorData.error || 'Generation failed';
+        
+        // Check if it's a content moderation error
+        if (errorMessage.includes('sensitive') || errorMessage.includes('flagged')) {
+          throw new Error('Content flagged by AI safety filters. Try rephrasing your prompt or using different words. Your credit has been refunded.');
+        }
+        
+        throw new Error(errorMessage);
       }
 
       const data = await response.json();
