@@ -76,7 +76,7 @@ export function VideoGenerationInterface({ triggerGeneration, onGenerationStart 
       await refreshUserData();
       
       // If using Replicate, poll for actual video completion
-      if (apiProvider === 'replicate' && data.id) {
+      if (apiProvider === 'replicate' && data.id && !data.id.startsWith('gen_')) {
         const generationId = newGeneration.id;
         const predictionId = data.id;
         
@@ -84,6 +84,14 @@ export function VideoGenerationInterface({ triggerGeneration, onGenerationStart 
         const pollInterval = setInterval(async () => {
           try {
             const statusResponse = await fetch(`/api/replicate/status/${predictionId}`);
+            
+            if (!statusResponse.ok) {
+              console.error('Status check failed:', statusResponse.status);
+              clearInterval(pollInterval);
+              setIsGenerating(false);
+              return;
+            }
+            
             const statusData = await statusResponse.json();
             
             // Update progress based on status
@@ -113,6 +121,8 @@ export function VideoGenerationInterface({ triggerGeneration, onGenerationStart 
             }
           } catch (error) {
             console.error('Polling error:', error);
+            clearInterval(pollInterval);
+            setIsGenerating(false);
           }
         }, 3000);
         

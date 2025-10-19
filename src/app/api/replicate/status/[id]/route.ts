@@ -7,18 +7,19 @@ export async function GET(
 ) {
   try {
     const { id } = params;
-
-    if (!id) {
+    
+    // Check if ID is valid (Replicate IDs don't start with "gen_")
+    if (!id || id.startsWith('gen_')) {
       return NextResponse.json(
-        { error: 'Prediction ID is required' },
+        { error: 'Invalid prediction ID. Generation may have failed to start.' },
         { status: 400 }
       );
     }
-
+    
     const result = await getReplicateStatus(id);
     return NextResponse.json(result);
   } catch (error: any) {
-    console.error('Replicate status check error:', error);
+    console.error('Replicate status check error for ID:', params.id, error);
     return NextResponse.json(
       { error: error.message || 'Failed to check video status' },
       { status: 500 }
