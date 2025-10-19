@@ -52,11 +52,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const fetchUserData = async (uid: string) => {
     try {
+      console.log('Fetching user data for UID:', uid);
       const userDocRef = doc(db, 'users', uid);
       const userDoc = await getDoc(userDocRef);
       
       if (userDoc.exists()) {
-        setUserData(userDoc.data() as UserData);
+        const data = userDoc.data() as UserData;
+        console.log('User data from Firebase:', data);
+        setUserData(data);
+      } else {
+        console.log('User document does not exist for UID:', uid);
       }
     } catch (error) {
       console.error('Error fetching user data:', error);
@@ -65,7 +70,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const refreshUserData = async () => {
     if (user) {
+      console.log('Refreshing user data...');
       await fetchUserData(user.uid);
+    } else {
+      console.log('Cannot refresh: No user logged in');
     }
   };
 
