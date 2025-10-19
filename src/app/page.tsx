@@ -13,6 +13,7 @@ import { VideoGenerationInterface } from '@/components/VideoGenerationInterface'
 import { Button } from '@/components/ui/button';
 import { StylePreset, Shot } from '@/types';
 import { Video, Palette, Camera, Sparkles } from 'lucide-react';
+import { REPLICATE_VIDEO_MODELS } from '@/lib/replicate-api';
 
 // Import data
 import promptRecipes from '@/data/prompt_recipes.json';
@@ -24,6 +25,7 @@ type Tab = 'builder' | 'presets' | 'shots' | 'generate';
 export default function Home() {
   const [activeTab, setActiveTab] = useState<Tab>('builder');
   const [generationTrigger, setGenerationTrigger] = useState<{ prompt: string; duration: string } | null>(null);
+  const [selectedModel, setSelectedModel] = useState<string>('openai/sora-2-pro');
   
   const { user, loading } = useAuth();
   const router = useRouter();
@@ -80,7 +82,7 @@ export default function Home() {
       {/* Header */}
       <header className="border-b border-purple-500/20 bg-slate-950/80 backdrop-blur-sm sticky top-0 z-40">
         <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between gap-4">
             <div className="flex items-center gap-3">
               <div className="bg-gradient-to-br from-purple-500 to-blue-500 p-2 rounded-lg">
                 <Video className="w-6 h-6 text-white" />
@@ -94,6 +96,23 @@ export default function Home() {
                 </p>
               </div>
             </div>
+            
+            {/* Global Model Selector */}
+            <div className="flex items-center gap-2 flex-1 max-w-md justify-end">
+              <span className="text-sm text-muted-foreground whitespace-nowrap">Model:</span>
+              <select
+                value={selectedModel}
+                onChange={(e) => setSelectedModel(e.target.value)}
+                className="px-3 py-1.5 rounded-md bg-slate-800 border border-slate-700 text-sm flex-1 min-w-0"
+              >
+                {Object.entries(REPLICATE_VIDEO_MODELS).map(([modelId, modelName]) => (
+                  <option key={modelId} value={modelId}>
+                    {modelName}
+                  </option>
+                ))}
+              </select>
+            </div>
+            
             <UserMenu />
           </div>
         </div>
@@ -145,6 +164,7 @@ export default function Home() {
           <VideoGenerationInterface 
             triggerGeneration={generationTrigger}
             onGenerationStart={() => setGenerationTrigger(null)}
+            selectedModel={selectedModel}
           />
         )}
       </main>

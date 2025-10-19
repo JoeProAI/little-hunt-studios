@@ -23,13 +23,14 @@ interface GenerationStatus {
 interface VideoGenerationInterfaceProps {
   triggerGeneration?: { prompt: string; duration: string } | null;
   onGenerationStart?: () => void;
+  selectedModel?: string;
 }
 
-export function VideoGenerationInterface({ triggerGeneration, onGenerationStart }: VideoGenerationInterfaceProps) {
+export function VideoGenerationInterface({ triggerGeneration, onGenerationStart, selectedModel: propSelectedModel }: VideoGenerationInterfaceProps) {
   const [generations, setGenerations] = useState<GenerationStatus[]>([]);
   const [isGenerating, setIsGenerating] = useState(false);
   const [apiProvider, setApiProvider] = useState<'openai' | 'replicate'>('replicate');
-  const [selectedModel, setSelectedModel] = useState<string>('openai/sora-2');
+  const selectedModel = propSelectedModel || 'openai/sora-2-pro';
   const { user, refreshUserData } = useAuth();
 
   const generateVideo = useCallback(async (prompt: string, duration: string = '5s', retryWithPixverse: boolean = false) => {
@@ -217,7 +218,7 @@ export function VideoGenerationInterface({ triggerGeneration, onGenerationStart 
       );
       setIsGenerating(false);
     }
-  }, [apiProvider, selectedModel, user?.uid, refreshUserData, onGenerationStart]);
+  }, [apiProvider, selectedModel, user?.uid, refreshUserData, onGenerationStart, propSelectedModel]);
 
   const getStatusIcon = (status: GenerationStatus['status']) => {
     switch (status) {
@@ -254,26 +255,7 @@ export function VideoGenerationInterface({ triggerGeneration, onGenerationStart 
   return (
     <div className="space-y-6">
       <div>
-        <div className="flex items-center justify-between mb-2">
-          <h2 className="text-3xl font-bold">Video Generation</h2>
-          <div className="flex items-center gap-4">
-            <div className="flex items-center gap-2">
-              <span className="text-sm text-muted-foreground">Model:</span>
-              <select
-                value={selectedModel}
-                onChange={(e) => setSelectedModel(e.target.value)}
-                disabled={isGenerating}
-                className="px-3 py-1.5 rounded-md bg-slate-800 border border-slate-700 text-sm min-w-[320px] disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {Object.entries(REPLICATE_VIDEO_MODELS).map(([modelId, modelName]) => (
-                  <option key={modelId} value={modelId}>
-                    {modelName}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
-        </div>
+        <h2 className="text-3xl font-bold mb-2">Video Generation</h2>
         <p className="text-muted-foreground">
           {selectedModel.includes('sora')
             ? `✅ Using ${selectedModel.includes('pro') ? 'Sora-2 Pro' : 'Sora-2'} - Best quality, but strict filters. Will auto-retry with Pixverse v5 if blocked.`
