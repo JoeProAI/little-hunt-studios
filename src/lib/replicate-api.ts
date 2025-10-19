@@ -40,7 +40,16 @@ export async function generateVideoWithReplicate(params: ReplicateVideoParams): 
     if (model.includes('sora')) {
       // Sora 2 parameters
       input.duration = params.duration || '5s';
-      input.aspect_ratio = params.aspect_ratio || '16:9';
+      
+      // Convert aspect ratio: "16:9" -> "landscape", "9:16" -> "portrait"
+      const aspectRatio = params.aspect_ratio || '16:9';
+      input.aspect_ratio = aspectRatio === '9:16' ? 'portrait' : 'landscape';
+      
+      // Sora 2 requires OpenAI API key
+      if (!process.env.OPENAI_API_KEY) {
+        throw new Error('OPENAI_API_KEY environment variable is required for Sora-2 generation');
+      }
+      input.openai_api_key = process.env.OPENAI_API_KEY;
     } else if (model.includes('minimax')) {
       // MiniMax parameters
       input.num_frames = params.duration === '5s' ? 150 : 300;
