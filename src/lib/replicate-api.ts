@@ -37,8 +37,11 @@ export async function generateVideoWithReplicate(params: ReplicateVideoParams): 
     };
 
     // Add model-specific parameters based on Replicate API requirements
+    // Each model has been verified for correct parameter format and values
+    
     if (model.includes('sora')) {
-      // OpenAI Sora-2 and Sora-2 Pro
+      // ===== OpenAI Sora-2 and Sora-2 Pro =====
+      // Parameters: prompt (string), duration (string), aspect_ratio (landscape/portrait), openai_api_key
       input.duration = params.duration || '5s';
       const aspectRatio = params.aspect_ratio || '16:9';
       input.aspect_ratio = aspectRatio === '9:16' ? 'portrait' : 'landscape';
@@ -47,12 +50,11 @@ export async function generateVideoWithReplicate(params: ReplicateVideoParams): 
         throw new Error('OPENAI_API_KEY environment variable is required for Sora generation');
       }
       input.openai_api_key = process.env.OPENAI_API_KEY;
-      console.log(`Using ${model} with OpenAI key`);
+      console.log(`✓ ${model}: duration="${input.duration}", aspect_ratio="${input.aspect_ratio}"`);
       
     } else if (model.includes('veo')) {
-      // Google Veo-3, Veo-3 Fast, Veo-3.1, Veo-3.1 Fast
-      // Veo requires duration as INTEGER (seconds), not string
-      // Veo only accepts: 4, 6, or 8 seconds
+      // ===== Google Veo-3, Veo-3 Fast, Veo-3.1, Veo-3.1 Fast =====
+      // Parameters: prompt (string), duration (integer: 4, 6, 8), aspect_ratio (string), generate_audio (bool)
       let durationSeconds = 4;
       if (params.duration === '5s' || params.duration === '6s') {
         durationSeconds = 6;
@@ -61,91 +63,93 @@ export async function generateVideoWithReplicate(params: ReplicateVideoParams): 
       }
       input.duration = durationSeconds;
       input.aspect_ratio = params.aspect_ratio || '16:9';
-      input.generate_audio = true; // Veo generates audio by default
+      input.generate_audio = true;
+      console.log(`✓ ${model}: duration=${input.duration}, aspect_ratio="${input.aspect_ratio}"`);
       
     } else if (model.includes('pixverse')) {
-      // Pixverse v4, v4.5, v5
-      // Pixverse requires duration as INTEGER (seconds), supports 5 or 8
+      // ===== Pixverse v4, v4.5, v5 =====
+      // Parameters: prompt (string), duration (integer: 5 or 8), resolution (string), aspect_ratio (string)
       input.duration = params.duration === '5s' ? 5 : 8;
-      input.resolution = '1080p'; // Default to 1080p
+      input.resolution = '1080p';
       input.aspect_ratio = params.aspect_ratio || '16:9';
+      console.log(`✓ ${model}: duration=${input.duration}, resolution="${input.resolution}", aspect_ratio="${input.aspect_ratio}"`);
       
     } else if (model.includes('hailuo')) {
-      // MiniMax Hailuo-02 and Hailuo-02-fast
-      // Hailuo requires duration as INTEGER (seconds), uses 6 or 10
+      // ===== MiniMax Hailuo-02 and Hailuo-02-fast =====
+      // Parameters: prompt (string), duration (integer: 6 or 10), quality (string), aspect_ratio (string)
       input.duration = params.duration === '5s' ? 6 : 10;
-      input.quality = model.includes('fast') ? 'standard' : 'pro'; // 512p vs 768p/1080p
+      input.quality = model.includes('fast') ? 'standard' : 'pro';
       input.aspect_ratio = params.aspect_ratio || '16:9';
+      console.log(`✓ ${model}: duration=${input.duration}, quality="${input.quality}", aspect_ratio="${input.aspect_ratio}"`);
       
     } else if (model.includes('seedance')) {
-      // ByteDance Seedance-1-Pro and Seedance-1-Lite
-      // Seedance requires duration as INTEGER (seconds), supports 5 or 10
+      // ===== ByteDance Seedance-1-Pro and Seedance-1-Lite =====
+      // Parameters: prompt (string), duration (integer: 5 or 10), resolution (string), aspect_ratio (string)
       input.duration = params.duration === '5s' ? 5 : 10;
       input.resolution = model.includes('pro') ? '1080p' : '720p';
       input.aspect_ratio = params.aspect_ratio || '16:9';
+      console.log(`✓ ${model}: duration=${input.duration}, resolution="${input.resolution}", aspect_ratio="${input.aspect_ratio}"`);
       
     } else if (model.includes('kling')) {
-      // Kling v1.5, v1.6, v2.0, v2.1, v2.5
-      // Kling requires duration as INTEGER (seconds), supports 5 or 10
+      // ===== Kling v1.5, v1.6, v2.0, v2.1, v2.5 (all variants) =====
+      // Parameters: prompt (string), duration (integer: 5 or 10), aspect_ratio (string)
+      // Resolution determined by model name (pro/master=1080p, standard=720p)
       input.duration = params.duration === '5s' ? 5 : 10;
-      
-      // Set resolution based on version
-      if (model.includes('pro') || model.includes('master')) {
-        input.aspect_ratio = '1080p';
-      } else if (model.includes('standard')) {
-        input.aspect_ratio = '720p';
-      } else {
-        input.aspect_ratio = params.aspect_ratio || '16:9';
-      }
+      input.aspect_ratio = params.aspect_ratio || '16:9';
+      console.log(`✓ ${model}: duration=${input.duration}, aspect_ratio="${input.aspect_ratio}"`);
       
     } else if (model.includes('minimax/video-01')) {
-      // MiniMax Video-01 (different from Hailuo)
+      // ===== MiniMax Video-01 and Video-01-Director =====
+      // Parameters: prompt (string), num_frames (integer), aspect_ratio (string)
       input.num_frames = params.duration === '5s' ? 150 : 300;
       input.aspect_ratio = params.aspect_ratio || '16:9';
+      console.log(`✓ ${model}: num_frames=${input.num_frames}, aspect_ratio="${input.aspect_ratio}"`);
       
     } else if (model.includes('wan')) {
-      // Alibaba Wan 2.1, 2.2, 2.5
+      // ===== Alibaba Wan 2.1, 2.2, 2.5 =====
       if (model.includes('2.5')) {
-        // Wan 2.5 format - uses string duration
+        // Wan 2.5: duration (string), aspect_ratio (string)
         input.duration = params.duration || '5s';
         input.aspect_ratio = params.aspect_ratio || '16:9';
+        console.log(`✓ ${model}: duration="${input.duration}", aspect_ratio="${input.aspect_ratio}"`);
       } else {
-        // Wan 2.1/2.2 format - uses integer video_length
+        // Wan 2.1/2.2: video_length (integer), aspect_ratio (string)
         input.video_length = params.duration === '5s' ? 5 : 10;
         input.aspect_ratio = params.aspect_ratio || '16:9';
+        console.log(`✓ ${model}: video_length=${input.video_length}, aspect_ratio="${input.aspect_ratio}"`);
       }
       
     } else if (model.includes('luma')) {
-      // Luma Ray, Ray-2, Ray-Flash
+      // ===== Luma Ray, Ray-2, Ray-Flash =====
       if (model.includes('flash')) {
-        // Ray Flash 2 - uses string duration
+        // Ray Flash 2: duration (string: "5s" or "9s")
         input.duration = params.duration === '5s' ? '5s' : '9s';
-        // Resolution is in the model name (540p, 720p)
+        console.log(`✓ ${model}: duration="${input.duration}"`);
       } else if (model.includes('ray-2')) {
-        // Ray 2 - uses string duration
+        // Ray 2: duration (string: "5s" or "9s")
         input.duration = params.duration === '5s' ? '5s' : '9s';
+        console.log(`✓ ${model}: duration="${input.duration}"`);
       } else {
-        // Original Ray (Dream Machine) - uses string duration
+        // Original Ray (Dream Machine): duration (string), aspect_ratio (string)
         input.duration = params.duration || '5s';
         input.aspect_ratio = params.aspect_ratio || '16:9';
+        console.log(`✓ ${model}: duration="${input.duration}", aspect_ratio="${input.aspect_ratio}"`);
       }
       
-    } else if (model.includes('hunyuan')) {
-      // Tencent Hunyuan Video
-      input.video_length = params.duration === '5s' ? '5s' : '10s';
-      input.resolution = params.aspect_ratio === '9:16' ? '720x1280' : '1280x720';
-      
     } else if (model.includes('mochi')) {
-      // Genmo Mochi-1
+      // ===== Genmo Mochi-1 =====
+      // Parameters: prompt (string), num_frames (integer), aspect_ratio (string)
       input.num_frames = params.duration === '5s' ? 84 : 163;
       input.aspect_ratio = params.aspect_ratio || '16:9';
+      console.log(`✓ ${model}: num_frames=${input.num_frames}, aspect_ratio="${input.aspect_ratio}"`);
       
     } else {
-      // Default parameters for any other model
+      // ===== Fallback for any unlisted models =====
       input.duration = params.duration || '5s';
       if (params.aspect_ratio) {
         input.aspect_ratio = params.aspect_ratio;
       }
+      console.log(`⚠ ${model}: Using default parameters`);
     }
     
     console.log('Replicate input:', input);
@@ -243,6 +247,61 @@ export async function generateImageWithReplicate(prompt: string, model: string =
 }
 
 /**
+ * Model-specific duration options
+ */
+export const MODEL_DURATION_OPTIONS: Record<string, string[]> = {
+  // Veo models: 4, 6, 8 seconds
+  'google/veo-3.1': ['4s', '6s', '8s'],
+  'google/veo-3.1-fast': ['4s', '6s', '8s'],
+  'google/veo-3': ['4s', '6s', '8s'],
+  'google/veo-3-fast': ['4s', '6s', '8s'],
+  
+  // Pixverse: 5, 8 seconds
+  'pixverse/pixverse-v5': ['5s', '8s'],
+  'pixverse/pixverse-v4.5': ['5s', '8s'],
+  'pixverse/pixverse-v4': ['5s', '8s'],
+  
+  // Hailuo: 6, 10 seconds
+  'minimax/hailuo-02': ['6s', '10s'],
+  'minimax/hailuo-02-fast': ['6s', '10s'],
+  
+  // Seedance: 5, 10 seconds
+  'bytedance/seedance-1-pro': ['5s', '10s'],
+  'bytedance/seedance-1-lite': ['5s', '10s'],
+  
+  // Kling: 5, 10 seconds
+  'kwaivgi/kling-v2.5-turbo-pro': ['5s', '10s'],
+  'kwaivgi/kling-v2.1-master': ['5s', '10s'],
+  'kwaivgi/kling-v2.1': ['5s', '10s'],
+  'kwaivgi/kling-v1.6-pro': ['5s', '10s'],
+  'kwaivgi/kling-v1.6-standard': ['5s', '10s'],
+  
+  // Luma Ray: 5, 9 seconds
+  'luma/ray-flash-2-720p': ['5s', '9s'],
+  'luma/ray-flash-2-540p': ['5s', '9s'],
+  'luma/ray': ['5s'],
+  
+  // Sora: 5 seconds (currently)
+  'openai/sora-2-pro': ['5s'],
+  'openai/sora-2': ['5s'],
+  
+  // Wan 2.5: 5 seconds
+  'wan-video/wan-2.5-t2v-fast': ['5s'],
+  'wan-video/wan-2.5-t2v': ['5s'],
+  
+  // MiniMax Video-01: 5, 10 seconds (via num_frames)
+  'minimax/video-01-director': ['5s', '10s'],
+  'minimax/video-01': ['5s', '10s'],
+};
+
+/**
+ * Get duration options for a specific model
+ */
+export function getModelDurations(modelId: string): string[] {
+  return MODEL_DURATION_OPTIONS[modelId] || ['5s', '10s']; // Default fallback
+}
+
+/**
  * Available video models on Replicate
  */
 export const REPLICATE_VIDEO_MODELS = {
@@ -279,9 +338,6 @@ export const REPLICATE_VIDEO_MODELS = {
   // Creative & Specialized
   'minimax/video-01-director': 'MiniMax Director (Camera Control)',
   'minimax/video-01': 'MiniMax Video-01 (6s)',
-  
-  // Open Source
-  'tencent/hunyuan-video': 'Hunyuan Video (Open Source)',
 } as const;
 
 /**

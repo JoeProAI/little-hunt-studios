@@ -95,13 +95,11 @@ export default function SelectModelPage() {
     if (selectedModel) {
       setIsLoading(true);
       localStorage.setItem('preferredModel', selectedModel);
-      localStorage.setItem('hasSeenModelSelection', 'true');
       router.push('/');
     }
   };
 
   const handleSkip = () => {
-    localStorage.setItem('hasSeenModelSelection', 'true');
     router.push('/');
   };
 
@@ -124,14 +122,14 @@ export default function SelectModelPage() {
           <div className="inline-flex items-center gap-2 mb-4">
             <Sparkles className="w-8 h-8 text-purple-400" />
             <h1 className="text-4xl font-bold bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent">
-              Choose Your Video Style
+              Choose Your Video Model
             </h1>
           </div>
           <p className="text-xl text-muted-foreground">
-            Select the AI model that best matches your creative vision
+            Each model has unique strengths - pick the one that matches your needs
           </p>
           <p className="text-sm text-muted-foreground mt-2">
-            Don&apos;t worry - you can change this anytime from the header
+            Watch demo clips to see each model&apos;s style and capabilities
           </p>
         </div>
 
@@ -213,22 +211,32 @@ export default function SelectModelPage() {
             onClick={handleSkip}
             size="lg"
           >
-            Skip for Now
+            Cancel
           </Button>
           <Button
             onClick={handleContinue}
             disabled={!selectedModel || isLoading}
             size="lg"
-            className="bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600"
+            className="bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600 min-w-[200px]"
           >
-            {isLoading ? 'Loading...' : 'Continue with ' + (FEATURED_MODELS.find(m => m.id === selectedModel)?.name || 'Selection')}
+            {isLoading ? (
+              <div className="flex items-center gap-2">
+                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                Applying...
+              </div>
+            ) : (
+              `Use ${FEATURED_MODELS.find(m => m.id === selectedModel)?.name || 'This Model'}`
+            )}
           </Button>
         </div>
 
-        {/* All Models Link */}
-        <div className="text-center mt-8">
+        {/* Info */}
+        <div className="text-center mt-8 space-y-2">
           <p className="text-sm text-muted-foreground">
-            These are our featured models. Access 30+ models from the header anytime.
+            💡 <strong>Tip:</strong> Add demo videos to <code className="bg-slate-800 px-2 py-1 rounded">/public/demos/</code> to preview each model&apos;s style
+          </p>
+          <p className="text-xs text-muted-foreground">
+            Featured: 6 top models • All 26 models available via quick-change dropdown
           </p>
         </div>
       </div>

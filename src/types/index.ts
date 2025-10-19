@@ -80,14 +80,14 @@ export type Shot = z.infer<typeof ShotSchema>;
 
 // Prompt Builder Types
 export const PromptBuilderSchema = z.object({
-  scene: z.string().min(1, "Scene description is required"),
-  subject: z.string().min(1, "Subject is required"),
-  action: z.string().min(1, "Action is required"),
+  scene: z.string().min(10, 'Scene description must be at least 10 characters'),
+  subject: z.string().min(3, 'Subject must be at least 3 characters'),
+  action: z.string().min(3, 'Action must be at least 3 characters'),
   camera: z.string().optional(),
   look: z.string().optional(),
   audio: z.string().optional(),
   negatives: z.string().optional(),
-  duration: z.enum(["5s", "10s", "15s", "20s"]).default("5s"),
+  duration: z.string().default('5s'), // Allow any duration string for model flexibility
 });
 
 export type PromptBuilderData = z.infer<typeof PromptBuilderSchema>;

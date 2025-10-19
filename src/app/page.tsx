@@ -7,20 +7,13 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 import { UserMenu } from '@/components/UserMenu';
 import { PromptBuilder } from '@/components/PromptBuilder';
-import { PresetGallery } from '@/components/PresetGallery';
-import { ShotBrowser } from '@/components/ShotBrowser';
 import { VideoGenerationInterface } from '@/components/VideoGenerationInterface';
+import { UserGallery } from '@/components/UserGallery';
 import { Button } from '@/components/ui/button';
-import { StylePreset, Shot } from '@/types';
-import { Video, Palette, Camera, Sparkles } from 'lucide-react';
+import { Video, Image as ImageIcon, Sparkles } from 'lucide-react';
 import { REPLICATE_VIDEO_MODELS } from '@/lib/replicate-api';
 
-// Import data
-import promptRecipes from '@/data/prompt_recipes.json';
-import stylePresets from '@/data/style_presets.json';
-import shotLibrary from '@/data/shot_library.json';
-
-type Tab = 'builder' | 'presets' | 'shots' | 'generate';
+type Tab = 'builder' | 'gallery' | 'generate';
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState<Tab>('builder');
@@ -40,17 +33,10 @@ export default function Home() {
     }
   }, []);
 
-  // Redirect to login if not authenticated, or to model selection if first time
+  // Redirect to login if not authenticated
   useEffect(() => {
-    if (!loading) {
-      if (!user) {
-        router.push('/login');
-      } else if (typeof window !== 'undefined') {
-        const hasSeenModelSelection = localStorage.getItem('hasSeenModelSelection');
-        if (!hasSeenModelSelection) {
-          router.push('/select-model');
-        }
-      }
+    if (!loading && !user) {
+      router.push('/login');
     }
   }, [user, loading, router]);
 
@@ -68,21 +54,9 @@ export default function Home() {
     setActiveTab('generate');
   };
 
-  const handleApplyPreset = (preset: StylePreset) => {
-    console.log('Applying preset:', preset);
-    // TODO: Populate prompt builder with preset
-    setActiveTab('builder');
-  };
-
-  const handleAddShot = (shot: Shot) => {
-    console.log('Adding shot:', shot);
-    // TODO: Add to project timeline
-  };
-
   const tabs = [
     { id: 'builder' as Tab, label: 'Prompt Builder', icon: Sparkles },
-    { id: 'presets' as Tab, label: 'Style Presets', icon: Palette },
-    { id: 'shots' as Tab, label: 'Shot Library', icon: Camera },
+    { id: 'gallery' as Tab, label: 'My Gallery', icon: ImageIcon },
     { id: 'generate' as Tab, label: 'Generate', icon: Video },
   ];
 
@@ -121,23 +95,36 @@ export default function Home() {
               </div>
             </div>
             
-            {/* Global Model Selector */}
-            <div className="flex items-center gap-2 flex-1 max-w-md justify-end">
-              <span className="text-sm text-muted-foreground whitespace-nowrap">Model:</span>
+            {/* Model Selector & User Menu */}
+            <div className="flex items-center gap-3">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => router.push('/select-model')}
+                className="hidden md:flex items-center gap-2"
+              >
+                <Video className="w-4 h-4" />
+                <span className="font-medium">
+                  {REPLICATE_VIDEO_MODELS[selectedModel as keyof typeof REPLICATE_VIDEO_MODELS]?.split(' ')[0] || 'Select Model'}
+                </span>
+              </Button>
+              
+              {/* Quick Change Dropdown (secondary) */}
               <select
                 value={selectedModel}
                 onChange={(e) => setSelectedModel(e.target.value)}
-                className="px-3 py-1.5 rounded-md bg-slate-800 border border-slate-700 text-sm flex-1 min-w-0"
+                className="px-2 py-1 rounded-md bg-slate-800 border border-slate-700 text-xs max-w-[150px]"
+                title="Quick change model"
               >
                 {Object.entries(REPLICATE_VIDEO_MODELS).map(([modelId, modelName]) => (
                   <option key={modelId} value={modelId}>
-                    {modelName}
+                    {modelName.split(' ')[0]}
                   </option>
                 ))}
               </select>
+              
+              <UserMenu />
             </div>
-            
-            <UserMenu />
           </div>
         </div>
       </header>
@@ -170,20 +157,12 @@ export default function Home() {
       {/* Main Content */}
       <main className="container mx-auto px-4 py-8">
         {activeTab === 'builder' && (
-          <PromptBuilder onPromptGenerate={handlePromptGenerate} />
-        )}
-        {activeTab === 'presets' && (
-          <PresetGallery
-            presets={stylePresets.presets as StylePreset[]}
-            onApplyPreset={handleApplyPreset}
+          <PromptBuilder 
+            onPromptGenerate={handlePromptGenerate}
+            selectedModel={selectedModel}
           />
         )}
-        {activeTab === 'shots' && (
-          <ShotBrowser
-            shots={shotLibrary.shots as Shot[]}
-            onAddShot={handleAddShot}
-          />
-        )}
+        {activeTab === 'gallery' && <UserGallery />}
         {activeTab === 'generate' && (
           <VideoGenerationInterface 
             triggerGeneration={generationTrigger}
@@ -199,10 +178,7 @@ export default function Home() {
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <div className="text-sm text-muted-foreground">
               <p>
-                Built with Next.js 14, TypeScript, Tailwind CSS, Sora 2, and GPT Image 1
-              </p>
-              <p className="text-xs mt-1">
-                Powered by OpenAI | {promptRecipes.recipes.length} Templates | {stylePresets.presets.length} Presets | {shotLibrary.shots.length} Shots
+                Powered by 26 AI video models and advanced prompt engineering
               </p>
             </div>
             <div className="flex gap-4 text-sm">

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { PromptBuilderData, PromptBuilderSchema } from '@/types';
@@ -12,16 +12,19 @@ import { Select } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Sparkles, Copy, Check, Wand2 } from 'lucide-react';
+import { getModelDurations } from '@/lib/replicate-api';
 
 interface PromptBuilderProps {
-  onPromptGenerate: (prompt: string, duration: string) => void;
+  onPromptGenerate?: (prompt: string, duration: string) => void;
+  selectedModel?: string;
 }
 
-export function PromptBuilder({ onPromptGenerate }: PromptBuilderProps) {
+export function PromptBuilder({ onPromptGenerate, selectedModel }: PromptBuilderProps) {
   const [generatedPrompt, setGeneratedPrompt] = useState('');
   const [copied, setCopied] = useState(false);
   const [pasteText, setPasteText] = useState('');
   const [showPasteArea, setShowPasteArea] = useState(false);
+  const [availableDurations, setAvailableDurations] = useState<string[]>(['5s', '10s']);
 
   const {
     register,
@@ -37,6 +40,19 @@ export function PromptBuilder({ onPromptGenerate }: PromptBuilderProps) {
   });
 
   const formValues = watch();
+  
+  // Update available durations when model changes
+  useEffect(() => {
+    if (selectedModel) {
+      const durations = getModelDurations(selectedModel);
+      setAvailableDurations(durations);
+      // Set first available duration if current is not valid for this model
+      const currentDuration = formValues.duration || '5s';
+      if (!durations.includes(currentDuration)) {
+        setValue('duration', durations[0]);
+      }
+    }
+  }, [selectedModel, formValues.duration, setValue]);
 
   const parseSmartPaste = async (text: string) => {
     try {
@@ -165,6 +181,29 @@ export function PromptBuilder({ onPromptGenerate }: PromptBuilderProps) {
                   Cancel
                 </Button>
               </div>
+              <div>
+                <label className="block text-sm font-medium mb-2">
+                  Duration
+                  {selectedModel && (
+                    <span className="text-xs text-muted-foreground ml-2">
+                      (Options for current model)
+                    </span>
+                  )}
+                </label>
+                <div className="flex gap-2 flex-wrap">
+                  {availableDurations.map(d => (
+                    <Button
+                      key={d}
+                      type="button"
+                      variant={formValues.duration === d ? 'default' : 'outline'}
+                      onClick={() => setValue('duration', d)}
+                      className="flex-1 min-w-[80px]"
+                    >
+                      {d}
+                    </Button>
+                  ))}
+                </div>
+              </div>
             </div>
           )}
 
@@ -258,13 +297,27 @@ export function PromptBuilder({ onPromptGenerate }: PromptBuilderProps) {
 
             {/* Duration */}
             <div className="space-y-2">
-              <Label htmlFor="duration">Duration</Label>
-              <Select id="duration" {...register('duration')}>
-                <option value="5s">5 seconds</option>
-                <option value="10s">10 seconds</option>
-                <option value="15s">15 seconds</option>
-                <option value="20s">20 seconds</option>
-              </Select>
+              <Label htmlFor="duration">
+                Duration
+                {selectedModel && (
+                  <span className="text-xs text-muted-foreground ml-2">
+                    (Options for current model)
+                  </span>
+                )}
+              </Label>
+              <div className="flex gap-2">
+                {availableDurations.map(d => (
+                  <Button
+                    key={d}
+                    type="button"
+                    variant={formValues.duration === d ? 'default' : 'outline'}
+                    onClick={() => setValue('duration', d)}
+                    className="flex-1"
+                  >
+                    {d}
+                  </Button>
+                ))}
+              </div>
             </div>
 
             <Button type="submit" className="w-full" size="lg">
