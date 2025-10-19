@@ -40,22 +40,39 @@ export async function generateVideoWithReplicate(params: ReplicateVideoParams): 
     if (model.includes('sora')) {
       // Sora 2 parameters
       input.duration = params.duration || '5s';
-      
-      // Convert aspect ratio: "16:9" -> "landscape", "9:16" -> "portrait"
       const aspectRatio = params.aspect_ratio || '16:9';
       input.aspect_ratio = aspectRatio === '9:16' ? 'portrait' : 'landscape';
       
-      // Sora 2 requires OpenAI API key
       if (!process.env.OPENAI_API_KEY) {
         throw new Error('OPENAI_API_KEY environment variable is required for Sora-2 generation');
       }
       input.openai_api_key = process.env.OPENAI_API_KEY;
+    } else if (model.includes('veo')) {
+      // Google Veo parameters
+      input.duration = params.duration || '5s';
+      if (params.aspect_ratio) input.aspect_ratio = params.aspect_ratio;
+    } else if (model.includes('seedance')) {
+      // Seedance parameters
+      input.duration = params.duration === '5s' ? '5s' : '10s';
+      if (params.aspect_ratio) input.aspect_ratio = params.aspect_ratio;
+    } else if (model.includes('hailuo')) {
+      // Hailuo parameters
+      input.duration = params.duration === '5s' ? '6s' : '10s';
+      if (params.aspect_ratio) input.aspect_ratio = params.aspect_ratio;
+    } else if (model.includes('kling')) {
+      // Kling parameters
+      input.duration = params.duration === '5s' ? '5s' : '10s';
+      if (params.aspect_ratio) input.aspect_ratio = params.aspect_ratio;
     } else if (model.includes('minimax')) {
       // MiniMax parameters
       input.num_frames = params.duration === '5s' ? 150 : 300;
       if (params.aspect_ratio) input.aspect_ratio = params.aspect_ratio;
     } else if (model.includes('pixverse')) {
       // Pixverse parameters
+      input.duration = params.duration || '5s';
+      if (params.aspect_ratio) input.aspect_ratio = params.aspect_ratio;
+    } else if (model.includes('wan')) {
+      // Wan parameters
       input.duration = params.duration || '5s';
       if (params.aspect_ratio) input.aspect_ratio = params.aspect_ratio;
     } else if (model.includes('hunyuan')) {
@@ -67,7 +84,7 @@ export async function generateVideoWithReplicate(params: ReplicateVideoParams): 
       input.num_frames = params.duration === '5s' ? 84 : 163;
       if (params.aspect_ratio) input.aspect_ratio = params.aspect_ratio;
     } else if (model.includes('luma') || model.includes('ray')) {
-      // Luma Ray2 parameters
+      // Luma Ray parameters
       input.duration = params.duration || '5s';
       if (params.aspect_ratio) input.aspect_ratio = params.aspect_ratio;
     }
@@ -170,12 +187,32 @@ export async function generateImageWithReplicate(prompt: string, model: string =
  * Available video models on Replicate
  */
 export const REPLICATE_VIDEO_MODELS = {
+  // Premium/Default
   'openai/sora-2': 'Sora-2 (Highest Quality, Strict Filters)',
-  'pixverse/pixverse': 'Pixverse (Great Quality, Relaxed Filters)',
-  'minimax/video-01': 'MiniMax (Fast, Good Quality)',
-  'tencent/hunyuan-video': 'Hunyuan Video (High Quality)',
-  'genmo/mochi-1-preview': 'Mochi-1 (Experimental)',
-  'luma/ray2': 'Luma Ray2 (High Quality)',
+  'google/veo-3': 'Google Veo-3 (Flagship, with Audio)',
+  'google/veo-3-fast': 'Google Veo-3 Fast (Faster & Cheaper)',
+  
+  // Recommended High Quality
+  'pixverse/pixverse-v5': 'Pixverse v5 (Enhanced Motion, 1080p)',
+  'pixverse/pixverse-v4.5': 'Pixverse v4.5 (Complex Actions)',
+  'minimax/hailuo-02': 'Hailuo 2 (Real World Physics, 1080p)',
+  'bytedance/seedance-1-pro': 'Seedance Pro (5s-10s, 1080p)',
+  
+  // Fast & Efficient
+  'luma/ray-flash-2-720p': 'Luma Ray Flash 720p (Fast)',
+  'luma/ray-flash-2-540p': 'Luma Ray Flash 540p (Fastest)',
+  'wan-video/wan-2.5-t2v-fast': 'Wan 2.5 T2V Fast',
+  'bytedance/seedance-1-lite': 'Seedance Lite (480p-720p)',
+  
+  // Premium Alternatives
+  'kwaivgi/kling-v2.5-turbo-pro': 'Kling 2.5 Turbo Pro (Cinematic)',
+  'kwaivgi/kling-v2.1-master': 'Kling 2.1 Master (1080p)',
+  'luma/ray': 'Luma Ray (Dream Machine)',
+  
+  // Open Source & Experimental
+  'wan-video/wan-2.5-t2v': 'Wan 2.5 T2V (with Audio)',
+  'minimax/video-01': 'MiniMax Video-01 (6s)',
+  'tencent/hunyuan-video': 'Hunyuan Video (Open Source)',
 } as const;
 
 /**

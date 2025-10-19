@@ -262,7 +262,8 @@ export function VideoGenerationInterface({ triggerGeneration, onGenerationStart 
               <select
                 value={selectedModel}
                 onChange={(e) => setSelectedModel(e.target.value)}
-                className="px-3 py-1.5 rounded-md bg-slate-800 border border-slate-700 text-sm min-w-[280px]"
+                disabled={isGenerating}
+                className="px-3 py-1.5 rounded-md bg-slate-800 border border-slate-700 text-sm min-w-[320px] disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {Object.entries(REPLICATE_VIDEO_MODELS).map(([modelId, modelName]) => (
                   <option key={modelId} value={modelId}>
