@@ -31,7 +31,7 @@ export function VideoGenerationInterface({ triggerGeneration, onGenerationStart 
   const [model, setModel] = useState<'sora' | 'minimax'>('sora');
   const { user, refreshUserData } = useAuth();
 
-  const generateVideo = useCallback(async (prompt: string, duration: string = '5s') => {
+  const generateVideo = useCallback(async (prompt: string, duration: string = '5s', retryWithMinimax: boolean = false) => {
     onGenerationStart?.();
     setIsGenerating(true);
     
@@ -49,6 +49,9 @@ export function VideoGenerationInterface({ triggerGeneration, onGenerationStart 
       // Choose API endpoint based on provider
       const endpoint = apiProvider === 'replicate' ? '/api/replicate/generate' : '/api/sora/generate';
       
+      // Use MiniMax if retrying or if manually selected
+      const selectedModel = retryWithMinimax ? 'minimax/video-01' : (model === 'minimax' ? 'minimax/video-01' : 'openai/sora-2');
+      
       const response = await fetch(endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -56,7 +59,7 @@ export function VideoGenerationInterface({ triggerGeneration, onGenerationStart 
           prompt, 
           duration,
           userId: user?.uid,
-          model: apiProvider === 'replicate' ? (model === 'minimax' ? 'minimax/video-01' : 'openai/sora-2') : undefined
+          model: apiProvider === 'replicate' ? selectedModel : undefined
         }),
       });
 
@@ -64,9 +67,32 @@ export function VideoGenerationInterface({ triggerGeneration, onGenerationStart 
         const errorData = await response.json();
         const errorMessage = errorData.error || 'Generation failed';
         
-        // Check if it's a content moderation error
-        if (errorMessage.includes('sensitive') || errorMessage.includes('flagged')) {
-          throw new Error('Content flagged by AI safety filters. Try rephrasing your prompt or using different words. Your credit has been refunded.');
+        // Check if it's a content moderation error from Sora-2
+        if ((errorMessage.includes('sensitive') || errorMessage.includes('flagged') || errorMessage.includes('E005')) && !retryWithMinimax && model === 'sora') {
+          // Auto-retry with MiniMax
+          console.log('Sora-2 blocked by content filter. Automatically retrying with MiniMax...');
+          
+          // Update generation status
+          setGenerations(prev =>
+            prev.map(gen =>
+              gen.id === newGeneration.id
+                ? { ...gen, status: 'processing' as const, progress: 5 }
+                : gen
+            )
+          );
+          
+          // Show user what's happening
+          setGenerations(prev =>
+            prev.map(gen =>
+              gen.id === newGeneration.id
+                ? { ...gen, prompt: `${prompt}\n\n⚠️ Sora-2 blocked - retrying with MiniMax...` }
+                : gen
+            )
+          );
+          
+          // Wait a moment then retry
+          await new Promise(resolve => setTimeout(resolve, 1000));
+          return await generateVideo(prompt, duration, true);
         }
         
         throw new Error(errorMessage);
