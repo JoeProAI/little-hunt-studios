@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { generateVideoWithReplicate } from '@/lib/replicate-api';
-import { deductCredits, hasEnoughCredits } from '@/lib/credits-admin';
+import { deductCredits, hasEnoughCredits, refundCredits } from '@/lib/credits-admin';
 import { getAdminDb } from '@/lib/firebase-admin';
 import { FieldValue } from 'firebase-admin/firestore';
 
@@ -43,13 +43,20 @@ export async function POST(request: NextRequest) {
     // Deduct credits BEFORE generation
     await deductCredits(userId, 1);
 
-    // Call Replicate API
-    const result = await generateVideoWithReplicate({
-      prompt,
-      duration,
-      aspect_ratio,
-      model,
-    });
+    let result;
+    try {
+      // Call Replicate API
+      result = await generateVideoWithReplicate({
+        prompt,
+        duration,
+        aspect_ratio,
+        model,
+      });
+    } catch (generationError: any) {
+      // Refund credits if generation fails
+      await refundCredits(userId, 1, `Generation failed: ${generationError.message}`);
+      throw generationError;
+    }
 
     // Save video to Firestore using Admin SDK (lazy-loaded)
     const db = getAdminDb();

@@ -70,3 +70,22 @@ export async function hasEnoughCredits(userId: string, required: number = 1): Pr
   const credits = await getCredits(userId);
   return credits >= required;
 }
+
+export async function refundCredits(userId: string, amount: number, reason: string): Promise<void> {
+  const db = getAdminDb();
+  const userRef = db.collection('users').doc(userId);
+  
+  await userRef.update({
+    credits: FieldValue.increment(amount),
+    totalVideosGenerated: FieldValue.increment(-1),
+  });
+  
+  // Log transaction
+  await db.collection('transactions').add({
+    userId,
+    type: 'refund',
+    amount: amount,
+    description: `Credit refund: ${reason}`,
+    createdAt: FieldValue.serverTimestamp(),
+  });
+}
