@@ -51,7 +51,9 @@ export async function generateVideoWithReplicate(params: ReplicateVideoParams): 
       
     } else if (model.includes('veo')) {
       // Google Veo-3, Veo-3 Fast, Veo-3.1, Veo-3.1 Fast
-      input.duration = params.duration || '5s';
+      // Veo requires duration as INTEGER (seconds), not string
+      const durationSeconds = params.duration === '5s' ? 5 : 10;
+      input.duration = durationSeconds;
       input.aspect_ratio = params.aspect_ratio || '16:9';
       input.generate_audio = true; // Veo generates audio by default
       
@@ -94,11 +96,11 @@ export async function generateVideoWithReplicate(params: ReplicateVideoParams): 
     } else if (model.includes('wan')) {
       // Alibaba Wan 2.1, 2.2, 2.5
       if (model.includes('2.5')) {
-        // Wan 2.5 format
+        // Wan 2.5 format - uses string duration
         input.duration = params.duration || '5s';
         input.aspect_ratio = params.aspect_ratio || '16:9';
       } else {
-        // Wan 2.1/2.2 format
+        // Wan 2.1/2.2 format - uses integer video_length
         input.video_length = params.duration === '5s' ? 5 : 10;
         input.aspect_ratio = params.aspect_ratio || '16:9';
       }
@@ -106,14 +108,15 @@ export async function generateVideoWithReplicate(params: ReplicateVideoParams): 
     } else if (model.includes('luma')) {
       // Luma Ray, Ray-2, Ray-Flash
       if (model.includes('flash')) {
-        // Ray Flash 2
+        // Ray Flash 2 - uses string duration
         input.duration = params.duration === '5s' ? '5s' : '9s';
         // Resolution is in the model name (540p, 720p)
       } else if (model.includes('ray-2')) {
-        // Ray 2
+        // Ray 2 - uses string duration
         input.duration = params.duration === '5s' ? '5s' : '9s';
       } else {
-        // Original Ray (Dream Machine)
+        // Original Ray (Dream Machine) - uses string duration
+        input.duration = params.duration || '5s';
         input.aspect_ratio = params.aspect_ratio || '16:9';
       }
       
