@@ -65,25 +65,29 @@ export async function generateVideoWithReplicate(params: ReplicateVideoParams): 
       
     } else if (model.includes('pixverse')) {
       // Pixverse v4, v4.5, v5
-      input.duration = params.duration === '5s' ? '5s' : '8s'; // Pixverse supports 5s or 8s
+      // Pixverse requires duration as INTEGER (seconds), supports 5 or 8
+      input.duration = params.duration === '5s' ? 5 : 8;
       input.resolution = '1080p'; // Default to 1080p
       input.aspect_ratio = params.aspect_ratio || '16:9';
       
     } else if (model.includes('hailuo')) {
       // MiniMax Hailuo-02 and Hailuo-02-fast
-      input.duration = params.duration === '5s' ? '6s' : '10s'; // Hailuo uses 6s or 10s
+      // Hailuo requires duration as INTEGER (seconds), uses 6 or 10
+      input.duration = params.duration === '5s' ? 6 : 10;
       input.quality = model.includes('fast') ? 'standard' : 'pro'; // 512p vs 768p/1080p
       input.aspect_ratio = params.aspect_ratio || '16:9';
       
     } else if (model.includes('seedance')) {
       // ByteDance Seedance-1-Pro and Seedance-1-Lite
-      input.duration = params.duration === '5s' ? '5s' : '10s';
+      // Seedance requires duration as INTEGER (seconds), supports 5 or 10
+      input.duration = params.duration === '5s' ? 5 : 10;
       input.resolution = model.includes('pro') ? '1080p' : '720p';
       input.aspect_ratio = params.aspect_ratio || '16:9';
       
     } else if (model.includes('kling')) {
       // Kling v1.5, v1.6, v2.0, v2.1, v2.5
-      input.duration = params.duration === '5s' ? '5s' : '10s';
+      // Kling requires duration as INTEGER (seconds), supports 5 or 10
+      input.duration = params.duration === '5s' ? 5 : 10;
       
       // Set resolution based on version
       if (model.includes('pro') || model.includes('master')) {
