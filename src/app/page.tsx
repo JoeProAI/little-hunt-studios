@@ -113,12 +113,12 @@ export default function Home() {
               <select
                 value={selectedModel}
                 onChange={(e) => setSelectedModel(e.target.value)}
-                className="px-2 py-1 rounded-md bg-slate-800 border border-slate-700 text-xs max-w-[150px]"
+                className="px-2 py-1 rounded-md bg-slate-800 border border-slate-700 text-xs min-w-[200px]"
                 title="Quick change model"
               >
                 {Object.entries(REPLICATE_VIDEO_MODELS).map(([modelId, modelName]) => (
                   <option key={modelId} value={modelId}>
-                    {modelName.split(' ')[0]}
+                    {modelName}
                   </option>
                 ))}
               </select>
