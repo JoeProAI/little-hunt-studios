@@ -50,16 +50,58 @@ const FEATURED_MODELS: ModelOption[] = [
     features: ['Real World Physics', '1080p', 'Natural Motion', 'High Quality'],
   },
   {
+    id: 'bytedance/seedance-1-pro',
+    name: 'Seedance Pro',
+    description: 'High-quality 5-10 second videos with excellent detail and motion quality.',
+    features: ['5-10s Duration', '1080p', 'Detailed', 'Smooth Motion'],
+  },
+  {
+    id: 'wan-video/wan-2.5-t2v',
+    name: 'Wan 2.5 T2V',
+    description: 'Text-to-video with audio generation. Balanced quality and speed.',
+    features: ['Audio Generation', 'Fast', 'Good Quality', 'Versatile'],
+  },
+  {
+    id: 'minimax/video-01',
+    name: 'MiniMax Video-01',
+    description: 'Flexible frame-based generation for precise control over video length.',
+    features: ['Frame Control', '5-10s', 'Customizable', 'Consistent'],
+  },
+  {
     id: 'kwaivgi/kling-v2.5-turbo-pro',
     name: 'Kling 2.5 Turbo Pro',
     description: 'Cinematic depth and smooth motion with excellent prompt adherence.',
     features: ['Cinematic Depth', 'Smooth Motion', 'Pro-Level', 'Prompt Adherence'],
   },
   {
+    id: 'kwaivgi/kling-v2.1-master',
+    name: 'Kling 2.1 Master',
+    description: 'Master quality with 1080p output. Balanced speed and quality.',
+    features: ['1080p', 'Master Quality', 'Balanced', 'Reliable'],
+  },
+  {
+    id: 'kwaivgi/kling-v1.6-pro',
+    name: 'Kling 1.6 Pro',
+    description: 'Professional-grade 1080p video with proven stability.',
+    features: ['1080p', 'Professional', 'Stable', 'Proven'],
+  },
+  {
     id: 'luma/ray-flash-2-720p',
-    name: 'Luma Ray Flash',
-    description: 'Fast and affordable. Great for quick iterations and prototyping.',
+    name: 'Luma Ray Flash 720p',
+    description: 'Fast generation at 720p. Great for quick iterations and prototyping.',
     features: ['Fast Generation', '720p', 'Cost Effective', 'Quick Turnaround'],
+  },
+  {
+    id: 'luma/ray-flash-2-540p',
+    name: 'Luma Ray Flash 540p',
+    description: 'Fastest option at 540p. Perfect for rapid testing and drafts.',
+    features: ['Fastest', '540p', 'Very Affordable', 'Instant Preview'],
+  },
+  {
+    id: 'luma/ray',
+    name: 'Luma Ray (Dream Machine)',
+    description: 'Original Luma Ray model with consistent, reliable results.',
+    features: ['Consistent', 'Reliable', 'Well-Tested', 'Community Favorite'],
   },
 ];
 
@@ -236,7 +278,7 @@ export default function SelectModelPage() {
             💡 <strong>Tip:</strong> Add demo videos to <code className="bg-slate-800 px-2 py-1 rounded">/public/demos/</code> to preview each model&apos;s style
           </p>
           <p className="text-xs text-muted-foreground">
-            Featured: 6 top models • All 26 models available via quick-change dropdown
+            Featured: 14 top models • All 26 models available via quick-change dropdown
           </p>
         </div>
       </div>
