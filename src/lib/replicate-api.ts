@@ -122,13 +122,13 @@ export async function generateVideoWithReplicate(params: ReplicateVideoParams): 
     } else if (model.includes('luma')) {
       // ===== Luma Ray, Ray-2, Ray-Flash =====
       if (model.includes('flash')) {
-        // Ray Flash 2: duration (string: "5s" or "9s")
-        input.duration = params.duration === '5s' ? '5s' : '9s';
-        console.log(`✓ ${model}: duration="${input.duration}"`);
+        // Ray Flash 2: duration (integer: 5 or 9)
+        input.duration = params.duration === '9s' ? 9 : 5;
+        console.log(`✓ ${model}: duration=${input.duration}`);
       } else if (model.includes('ray-2')) {
-        // Ray 2: duration (string: "5s" or "9s")
-        input.duration = params.duration === '5s' ? '5s' : '9s';
-        console.log(`✓ ${model}: duration="${input.duration}"`);
+        // Ray 2: duration (integer: 5 or 9)
+        input.duration = params.duration === '9s' ? 9 : 5;
+        console.log(`✓ ${model}: duration=${input.duration}`);
       } else {
         // Original Ray (Dream Machine): duration (string), aspect_ratio (string)
         input.duration = params.duration || '5s';
