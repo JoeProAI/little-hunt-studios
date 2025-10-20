@@ -78,7 +78,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   useEffect(() => {
+    console.log('AuthContext: Setting up auth listener');
+    
+    // Set a timeout to stop loading if Firebase doesn't respond
+    const timeout = setTimeout(() => {
+      console.warn('AuthContext: Firebase auth timeout - stopping loading');
+      setLoading(false);
+    }, 5000); // 5 second timeout
+    
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      console.log('AuthContext: Auth state changed', user ? 'User logged in' : 'No user');
+      clearTimeout(timeout); // Clear timeout once we get a response
       setUser(user);
       
       if (user) {
@@ -88,9 +98,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
       
       setLoading(false);
+    }, (error) => {
+      console.error('AuthContext: Auth state change error:', error);
+      clearTimeout(timeout);
+      setLoading(false);
     });
 
-    return unsubscribe;
+    return () => {
+      clearTimeout(timeout);
+      unsubscribe();
+    };
   }, []);
 
   const signInWithGoogle = async () => {
