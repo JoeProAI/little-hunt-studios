@@ -60,19 +60,27 @@ export async function POST(request: NextRequest) {
 
     // Save video to Firestore using Admin SDK (lazy-loaded)
     const db = getAdminDb();
+    const { REPLICATE_VIDEO_MODELS } = await import('@/lib/replicate-api');
+    const modelName = REPLICATE_VIDEO_MODELS[model as keyof typeof REPLICATE_VIDEO_MODELS] || model;
+    
     await db.collection('videos').add({
       userId,
+      type: 'video',
+      url: result.video_url || '',
+      thumbnailUrl: result.video_url || '', // Can be extracted later
       prompt,
-      videoUrl: result.video_url || null,
-      status: result.status,
+      model: model || 'openai/sora-2-pro',
+      modelName,
       duration,
       aspectRatio: aspect_ratio,
-      model: model || 'openai/sora-2',
+      status: result.status === 'succeeded' ? 'completed' : result.status === 'failed' ? 'failed' : 'processing',
+      error: result.error,
+      replicateId: result.id,
       creditsCost: 1,
       createdAt: FieldValue.serverTimestamp(),
     });
 
-    return NextResponse.json(result);
+    return NextResponse.json({ ...result, saved: true });
   } catch (error: any) {
     console.error('Replicate generation error:', error);
     

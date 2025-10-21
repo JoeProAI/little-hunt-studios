@@ -40,9 +40,20 @@ export function UserGallery() {
   useEffect(() => {
     if (!user) return;
 
-    // TODO: Fetch user's generated content from Firebase
-    // For now, show placeholder
-    setLoading(false);
+    const fetchVideos = async () => {
+      try {
+        setLoading(true);
+        const { getUserVideos } = await import('@/lib/video-storage');
+        const videos = await getUserVideos(user.uid);
+        setItems(videos as GalleryItem[]);
+      } catch (error) {
+        console.error('Error fetching videos:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchVideos();
   }, [user]);
 
   const filteredItems = items.filter(item => 
@@ -69,8 +80,14 @@ export function UserGallery() {
   const handleDelete = async (id: string) => {
     if (!confirm('Are you sure you want to delete this item?')) return;
     
-    // TODO: Delete from Firebase
-    setItems(prev => prev.filter(item => item.id !== id));
+    try {
+      const { deleteVideoFromGallery } = await import('@/lib/video-storage');
+      await deleteVideoFromGallery(id, user!.uid);
+      setItems(prev => prev.filter(item => item.id !== id));
+    } catch (error) {
+      console.error('Error deleting video:', error);
+      alert('Failed to delete video. Please try again.');
+    }
   };
 
   if (loading) {
