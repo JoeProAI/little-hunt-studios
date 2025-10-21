@@ -107,17 +107,11 @@ export async function generateVideoWithReplicate(params: ReplicateVideoParams): 
       
     } else if (model.includes('wan')) {
       // ===== Alibaba Wan 2.1, 2.2, 2.5 =====
-      if (model.includes('2.5')) {
-        // Wan 2.5: duration (string), aspect_ratio (string)
-        input.duration = params.duration || '5s';
-        input.aspect_ratio = params.aspect_ratio || '16:9';
-        console.log(`✓ ${model}: duration="${input.duration}", aspect_ratio="${input.aspect_ratio}"`);
-      } else {
-        // Wan 2.1/2.2: video_length (integer), aspect_ratio (string)
-        input.video_length = params.duration === '5s' ? 5 : 10;
-        input.aspect_ratio = params.aspect_ratio || '16:9';
-        console.log(`✓ ${model}: video_length=${input.video_length}, aspect_ratio="${input.aspect_ratio}"`);
-      }
+      // All Wan models use duration (integer: 5)
+      input.duration = 5; // Wan only supports 5 seconds
+      input.aspect_ratio = params.aspect_ratio || '16:9';
+      console.log(`✓ ${model}: duration=${input.duration}, aspect_ratio="${input.aspect_ratio}"`);
+
       
     } else if (model.includes('luma')) {
       // ===== Luma Ray, Ray-2, Ray-Flash =====
