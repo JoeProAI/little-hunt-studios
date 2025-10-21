@@ -203,7 +203,7 @@ export default function PricingPage() {
             <div>
               <h3 className="font-semibold mb-2">Can I mix model tiers?</h3>
               <p className="text-sm text-muted-foreground">
-                Yes! Use your credits on any combination of models. Generate 10 premium videos, or 30 mid-range, or 60 budget - it's up to you.
+                Yes! Use your credits on any combination of models. Generate 10 premium videos, or 30 mid-range, or 60 budget - it&apos;s up to you.
               </p>
             </div>
             <div>
