@@ -11,8 +11,9 @@ import { Label } from '@/components/ui/label';
 import { Select } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Sparkles, Copy, Check, Wand2 } from 'lucide-react';
+import { Sparkles, Copy, Check, Wand2, Coins, ChevronDown, ChevronUp } from 'lucide-react';
 import { getModelDurations } from '@/lib/replicate-api';
+import { getModelCredits, getModelTier } from '@/lib/model-pricing';
 
 interface PromptBuilderProps {
   onPromptGenerate?: (prompt: string, duration: string) => void;
@@ -321,8 +322,20 @@ export function PromptBuilder({ onPromptGenerate, selectedModel }: PromptBuilder
             </div>
 
             <Button type="submit" className="w-full" size="lg">
-              Generate Video with Sora 2
+              <Coins className="w-5 h-5 mr-2" />
+              Generate Video ({selectedModel ? getModelCredits(selectedModel) : 2} {selectedModel && getModelCredits(selectedModel) === 1 ? 'Credit' : 'Credits'})
             </Button>
+            {selectedModel && (
+              <div className="text-center mt-2">
+                <Badge variant={
+                  getModelTier(selectedModel).tier === 'premium' ? 'default' :
+                  getModelTier(selectedModel).tier === 'mid-range' ? 'secondary' :
+                  'outline'
+                } className="text-xs">
+                  {getModelTier(selectedModel).tier.toUpperCase()} - {getModelTier(selectedModel).description}
+                </Badge>
+              </div>
+            )}
           </form>
         </CardContent>
       </Card>

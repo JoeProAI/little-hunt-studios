@@ -31,17 +31,21 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Get model credit cost
+    const { getModelCredits } = await import('@/lib/model-pricing');
+    const creditCost = getModelCredits(model || 'openai/sora-2-pro');
+
     // Check if user has enough credits
-    const hasCredits = await hasEnoughCredits(userId, 1);
+    const hasCredits = await hasEnoughCredits(userId, creditCost);
     if (!hasCredits) {
       return NextResponse.json(
-        { error: 'Insufficient credits. You need 1 credit to generate a video. Please purchase more credits to continue.' },
+        { error: `Insufficient credits. This model requires ${creditCost} credits. Please purchase more credits to continue.` },
         { status: 402 }
       );
     }
 
     // Deduct credits BEFORE generation
-    await deductCredits(userId, 1);
+    await deductCredits(userId, creditCost);
 
     let result;
     try {
@@ -54,7 +58,7 @@ export async function POST(request: NextRequest) {
       });
     } catch (generationError: any) {
       // Refund credits if generation fails
-      await refundCredits(userId, 1, `Generation failed: ${generationError.message}`);
+      await refundCredits(userId, creditCost, `Generation failed: ${generationError.message}`);
       throw generationError;
     }
 
@@ -76,7 +80,7 @@ export async function POST(request: NextRequest) {
       status: result.status === 'succeeded' ? 'completed' : result.status === 'failed' ? 'failed' : 'processing',
       error: result.error,
       replicateId: result.id,
-      creditsCost: 1,
+      creditsCost: creditCost,
       createdAt: FieldValue.serverTimestamp(),
     });
 

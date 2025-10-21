@@ -8,8 +8,9 @@ import { useAuth } from '@/context/AuthContext';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { CheckCircle2, Play, Sparkles } from 'lucide-react';
+import { CheckCircle2, Play, Sparkles, Coins } from 'lucide-react';
 import { REPLICATE_VIDEO_MODELS } from '@/lib/replicate-api';
+import { getModelCredits, getModelTier } from '@/lib/model-pricing';
 
 interface ModelOption {
   id: string;
@@ -188,22 +189,27 @@ export default function SelectModelPage() {
               onClick={() => handleSelectModel(model.id)}
             >
               <CardHeader>
-                <div className="flex items-start justify-between">
-                  <div className="flex-1">
-                    <CardTitle className="flex items-center gap-2">
-                      {model.name}
+                <div className="flex items-start justify-between mb-3">
+                  <div>
+                    <h3 className="font-bold text-lg">{model.name}</h3>
+                    <div className="flex items-center gap-2 mt-1">
                       {model.recommended && (
-                        <Badge variant="default" className="bg-purple-500">
+                        <Badge variant="default" className="text-xs">
                           Recommended
                         </Badge>
                       )}
-                    </CardTitle>
-                    <CardDescription className="mt-2">
-                      {model.description}
-                    </CardDescription>
+                      <Badge variant={
+                        getModelTier(model.id).tier === 'premium' ? 'default' :
+                        getModelTier(model.id).tier === 'mid-range' ? 'secondary' :
+                        'outline'
+                      } className="text-xs">
+                        <Coins className="w-3 h-3 mr-1" />
+                        {getModelCredits(model.id)} {getModelCredits(model.id) === 1 ? 'Credit' : 'Credits'}
+                      </Badge>
+                    </div>
                   </div>
                   {selectedModel === model.id && (
-                    <CheckCircle2 className="w-6 h-6 text-purple-400 flex-shrink-0" />
+                    <CheckCircle2 className="w-6 h-6 text-green-400" />
                   )}
                 </div>
               </CardHeader>
