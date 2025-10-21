@@ -60,15 +60,29 @@ export async function getCredits(userId: string): Promise<number> {
   const userDoc = await db.collection('users').doc(userId).get();
   
   if (!userDoc.exists) {
+    console.error(`User not found: ${userId}`);
     throw new Error('User not found');
   }
   
-  return userDoc.data()?.credits || 0;
+  const userData = userDoc.data();
+  const credits = userData?.credits;
+  
+  console.log(`GetCredits for ${userId}:`, {
+    rawCredits: credits,
+    type: typeof credits,
+    parsedCredits: Number(credits) || 0
+  });
+  
+  // Ensure we return a number, not a string or undefined
+  return Number(credits) || 0;
 }
 
 export async function hasEnoughCredits(userId: string, required: number = 1): Promise<boolean> {
   const credits = await getCredits(userId);
-  return credits >= required;
+  console.log(`Credit check: User ${userId} has ${credits} credits, needs ${required}`);
+  const hasEnough = credits >= required;
+  console.log(`Result: ${hasEnough ? 'PASS' : 'FAIL'}`);
+  return hasEnough;
 }
 
 export async function refundCredits(userId: string, amount: number, reason: string): Promise<void> {
