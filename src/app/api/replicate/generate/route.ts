@@ -67,7 +67,8 @@ export async function POST(request: NextRequest) {
     const { REPLICATE_VIDEO_MODELS } = await import('@/lib/replicate-api');
     const modelName = REPLICATE_VIDEO_MODELS[model as keyof typeof REPLICATE_VIDEO_MODELS] || model;
     
-    await db.collection('videos').add({
+    // Build document data, excluding undefined fields
+    const videoData: any = {
       userId,
       type: 'video',
       url: result.video_url || '',
@@ -78,11 +79,17 @@ export async function POST(request: NextRequest) {
       duration,
       aspectRatio: aspect_ratio,
       status: result.status === 'succeeded' ? 'completed' : result.status === 'failed' ? 'failed' : 'processing',
-      error: result.error,
       replicateId: result.id,
       creditsCost: creditCost,
       createdAt: FieldValue.serverTimestamp(),
-    });
+    };
+    
+    // Only add error field if it exists
+    if (result.error) {
+      videoData.error = result.error;
+    }
+    
+    await db.collection('videos').add(videoData);
 
     return NextResponse.json({ ...result, saved: true });
   } catch (error: any) {
