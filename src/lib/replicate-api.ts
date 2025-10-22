@@ -76,11 +76,19 @@ export async function generateVideoWithReplicate(params: ReplicateVideoParams): 
       
     } else if (model.includes('hailuo')) {
       // ===== MiniMax Hailuo-02 and Hailuo-02-fast =====
-      // Parameters: prompt (string), duration (integer: 6 or 10), quality (string), aspect_ratio (string)
-      input.duration = params.duration === '5s' ? 6 : 10;
+      // Parameters: prompt (string), duration (integer: 6 or 10), quality (string), resolution (string), aspect_ratio (string)
+      // Note: 10s duration requires 768p resolution
+      const duration = params.duration === '5s' ? 6 : 10;
+      input.duration = duration;
       input.quality = model.includes('fast') ? 'standard' : 'pro';
+      
+      // 10s requires 768p, 6s can use higher quality
+      if (duration === 10) {
+        input.resolution = '768p';
+      }
+      
       input.aspect_ratio = params.aspect_ratio || '16:9';
-      console.log(`✓ ${model}: duration=${input.duration}, quality="${input.quality}", aspect_ratio="${input.aspect_ratio}"`);
+      console.log(`✓ ${model}: duration=${input.duration}, quality="${input.quality}", resolution="${input.resolution || 'auto'}", aspect_ratio="${input.aspect_ratio}"`);
       
     } else if (model.includes('seedance')) {
       // ===== ByteDance Seedance-1-Pro and Seedance-1-Lite =====
