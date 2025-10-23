@@ -27,6 +27,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
+    "test:models": "tsx scripts/test-all-models.ts",
+    "test:models:quick": "tsx scripts/test-models-quick.ts",
     "deploy": "powershell -ExecutionPolicy Bypass -File ./scripts/deploy.ps1"
   },
   "dependencies": {
