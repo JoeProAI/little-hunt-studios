@@ -1,18 +1,19 @@
 /**
  * Automated Model Testing Suite
  * Tests all 26 video models with their parameter combinations
+ * Automatically saves successful videos to Firebase as demo content
  * 
  * Usage:
  *   npm run test:models -- --userId=YOUR_USER_ID
  * 
  * Options:
  *   --userId: Your Firebase user ID (required)
- *   --saveVideos: Save successful videos as demo content
- *   --skipCredits: Skip credit checks (admin mode)
  */
 
 import { generateVideoWithReplicate, REPLICATE_VIDEO_MODELS, MODEL_DURATION_OPTIONS } from '../src/lib/replicate-api';
 import { getModelCredits, getModelTier } from '../src/lib/model-pricing';
+import { getAdminDb } from '../src/lib/firebase-admin';
+import { FieldValue } from 'firebase-admin/firestore';
 
 interface TestResult {
   model: string;
@@ -31,6 +32,44 @@ const TEST_PROMPTS = {
   medium: "A person walking through a bustling city street at night with neon lights reflecting on wet pavement",
   long: "An epic cinematic shot starting with a close-up of dewdrops on a leaf, slowly pulling back to reveal a vast forest canopy at sunrise"
 };
+
+/**
+ * Save demo video to Firebase
+ */
+async function saveDemoVideo(
+  userId: string,
+  modelId: string,
+  modelName: string,
+  videoUrl: string,
+  duration: string,
+  prompt: string,
+  credits: number
+): Promise<void> {
+  try {
+    const db = getAdminDb();
+    
+    await db.collection('videos').add({
+      userId,
+      type: 'video',
+      url: videoUrl,
+      thumbnailUrl: videoUrl,
+      prompt,
+      model: modelId,
+      modelName,
+      duration,
+      aspectRatio: '16:9',
+      status: 'completed',
+      replicateId: `demo_${Date.now()}`,
+      creditsCost: 0, // Demo videos don't cost user credits
+      isDemo: true, // Mark as demo video
+      createdAt: FieldValue.serverTimestamp(),
+    });
+    
+    console.log(`   💾 Saved to Firebase as demo video`);
+  } catch (error: any) {
+    console.error(`   ⚠️  Failed to save to Firebase: ${error.message}`);
+  }
+}
 
 async function testModel(
   modelId: string,
@@ -67,6 +106,19 @@ async function testModel(
     if (result.status === 'succeeded' && result.video_url) {
       console.log(`   ✅ SUCCESS in ${timeTaken}s`);
       console.log(`   Video URL: ${result.video_url}`);
+      
+      // Save to Firebase if userId provided
+      if (userId) {
+        await saveDemoVideo(
+          userId,
+          modelId,
+          modelName,
+          result.video_url,
+          duration,
+          prompt,
+          credits
+        );
+      }
       
       return {
         model: modelId,
